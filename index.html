@@ -1,0 +1,1829 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#0f86c0"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icon-192.png"><link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>United Engineers</title>
+<meta name="apple-mobile-web-app-title" content="United Engineers">
+<meta name="application-name" content="United Engineers">
+<style>
+:root{--main:#0f86c0;--main2:#0b6a9a;--bg:#f5f1ea;--card:#fff;--txt:#1f2937;--mut:#6b7280;--ok:#15803d;--bad:#b91c1c;--line:#e5e7eb}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;font-family:"Segoe UI",Tahoma,Arial,sans-serif;background:var(--bg);color:var(--txt);padding-bottom:70px}
+header{background:var(--main);color:#fff;padding:14px 16px;position:sticky;top:0;z-index:5;display:flex;justify-content:space-between;align-items:center}
+header h1{margin:0;font-size:19px}
+header small{opacity:.85}
+main{max-width:900px;margin:0 auto;padding:12px}
+nav{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--line);display:flex;z-index:6}
+nav button{flex:1;border:0;background:none;padding:8px 1px;font-size:10px;color:var(--mut);font-family:inherit}
+nav button span{display:block;font-size:20px}
+nav button.on{color:var(--main);font-weight:700}
+.card{background:var(--card);border-radius:12px;padding:14px;margin-bottom:12px;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+@media(min-width:700px){.grid{grid-template-columns:repeat(4,1fr)}}
+.stat{background:var(--card);border-radius:12px;padding:12px;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.stat b{display:block;font-size:20px;margin-top:4px}
+.stat.g b{color:var(--ok)}.stat.r b{color:var(--bad)}
+h2{font-size:16px;margin:0 0 10px}
+input,select,textarea{width:100%;padding:10px;border:1px solid var(--line);border-radius:8px;font-size:15px;font-family:inherit;margin-bottom:8px;background:#fff}
+label{font-size:12px;color:var(--mut);display:block;margin-bottom:2px}
+.row{display:flex;gap:8px}.row>*{flex:1}
+.btn{background:var(--main);color:#fff;border:0;border-radius:8px;padding:10px 14px;font-size:14px;font-family:inherit;cursor:pointer}
+.btn.s{padding:6px 10px;font-size:12px}
+.btn.o{background:#fff;color:var(--main);border:1px solid var(--main)}
+.btn.d{background:var(--bad)}
+.btn.k{background:var(--ok)}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{padding:8px 6px;border-bottom:1px solid var(--line);text-align:right}
+th{color:var(--mut);font-weight:600;font-size:12px}
+.tw{overflow-x:auto}
+.tag{display:inline-block;padding:2px 8px;border-radius:99px;font-size:11px;background:#e0f2fe;color:#0b6a9a}
+.tag.low{background:#fee2e2;color:var(--bad)}
+.tag.ok{background:#dcfce7;color:var(--ok)}
+.empty{text-align:center;color:var(--mut);padding:20px}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:flex-end;justify-content:center;z-index:20}
+.modal.show{display:flex}
+.modal>div{background:#fff;width:100%;max-width:520px;max-height:92vh;overflow:auto;border-radius:16px 16px 0 0;padding:16px}
+@media(min-width:700px){.modal{align-items:center}.modal>div{border-radius:16px}}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
+.chip{padding:6px 12px;border-radius:99px;border:1px solid var(--main);color:var(--main);background:#fff;font-size:13px;cursor:pointer;font-family:inherit}
+.chip.on{background:var(--main);color:#fff}
+.cart-i{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px dashed var(--line);font-size:14px}
+.total{font-size:20px;font-weight:700;color:var(--main);text-align:center;margin:8px 0}
+@media print{header,nav,.noprint{display:none!important}body{background:#fff}}
+#receipt{display:none}
+@media print{#receipt{display:block;font-size:13px}main{display:none}.modal,#splash{display:none!important}}
+#splash{position:fixed;inset:0;background:#f9fdff;z-index:50;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;transition:opacity .5s}
+#splash.off{opacity:0;pointer-events:none}
+#splash img{width:min(72vw,340px)}
+header .l{display:flex;align-items:center;gap:10px}
+.hlogo{width:44px;height:44px;border-radius:8px;background:#fff;object-fit:contain;padding:2px}
+.homelogo{mix-blend-mode:multiply;display:block;margin:0 auto 10px;width:150px;max-width:50%}
+.thumbs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px}
+.th{position:relative;width:76px;height:76px;border:1px solid var(--line);border-radius:8px;overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:11px;text-align:center;background:#f9fafb;cursor:pointer}
+.th img{width:100%;height:100%;object-fit:cover}
+.th .x{position:absolute;top:2px;left:2px;background:rgba(0,0,0,.65);color:#fff;border:0;border-radius:50%;width:20px;height:20px;font-size:12px;line-height:1}
+.kv{display:grid;grid-template-columns:120px 1fr;gap:6px 8px;font-size:14px}
+.kv b{color:var(--mut);font-weight:600;font-size:12px}
+.kv span{overflow-wrap:anywhere}
+.sec{font-size:13px;font-weight:700;color:var(--main);margin:12px 0 6px;border-bottom:1px solid var(--line);padding-bottom:3px}
+.secret{cursor:pointer;color:var(--main)}
+label.chk{display:flex;gap:8px;align-items:center;font-size:14px;color:var(--txt);margin:6px 0}
+label.chk input{width:auto;margin:0}
+label.btn{display:block;text-align:center;margin:0;color:var(--main);font-size:14px}
+label.btn.o{color:var(--main)}
+.bars{display:flex;gap:2px;align-items:flex-end;height:120px;padding-top:6px}
+.bar{flex:1;min-width:0;display:flex;flex-direction:column;justify-content:flex-end;align-items:center}
+.bar i{display:block;width:100%;background:var(--main);border-radius:3px 3px 0 0;min-height:1px}
+.bar small{font-size:9px;color:var(--mut);margin-top:2px}
+#lock,#ap{position:fixed;inset:0;z-index:100;display:none;overflow:auto;padding:20px;background:var(--bg)}
+#ap{z-index:120;background:rgba(0,0,0,.65)}
+.apbox{background:var(--card);max-width:380px;margin:8vh auto 0;border-radius:14px;padding:18px;box-shadow:0 4px 18px rgba(0,0,0,.25)}
+body.nocost .costcol{display:none}
+</style>
+</head>
+<body>
+<div id="splash"><img class="logo" alt=""><h1 id="spName" style="margin:6px 0 0;color:var(--main2);font-size:24px;text-align:center">الحاجة أم رضا للمفاتيح</h1><div style="font-weight:700;color:#444;font-size:18px;letter-spacing:1px;direction:ltr">United Engineers</div><button class="btn" onclick="hideSplash()">دخول</button></div>
+<header><div class="l"><img class="logo hlogo" alt=""><div><h1><span id="shopName">الحاجة أم رضا للمفاتيح</span></h1><small id="today"></small><small style="display:block;opacity:.9;font-weight:700;direction:ltr;text-align:right">United Engineers</small></div></div><div style="display:flex;gap:6px;align-items:center"><small id="who"></small><button class="btn s o" onclick="lockNow()">🔒</button><button class="btn s o" onclick="go('settings')">⚙️</button></div></header>
+<main id="app"></main>
+<div id="receipt"></div>
+<nav>
+<button data-p="home" class="on" onclick="go('home')"><span>🏠</span>الرئيسية</button>
+<button data-p="sell" onclick="go('sell')"><span>🛒</span>بيع</button>
+<button data-p="stock" onclick="go('stock')"><span>📦</span>المخزون</button>
+<button data-p="cust" onclick="go('cust')"><span>👥</span>العملاء</button>
+<button data-p="supp" onclick="go('supp')"><span>🏭</span>الموردين</button>
+<button data-p="exp" onclick="go('exp')"><span>💸</span>مصروفات</button>
+<button data-p="rep" onclick="go('rep')"><span>📊</span>تقارير</button>
+</nav>
+<div id="lock"></div><div id="ap"></div>
+<div class="modal" id="modal"><div id="modalBody"></div></div>
+<div class="modal" id="viewer" style="z-index:30"><div id="viewerBody"></div></div>
+
+<script>
+// ============ التخزين ============
+const KEY='keyshop_v1';
+const def={settings:{shop:'الحاجة أم رضا للمفاتيح',phone:'',cur:'ج.م',low:5},items:[],customers:[],cars:[],suppliers:[],purchases:[],supPay:[],sales:[],expenses:[],losses:[],payroll:[],workers:[],diary:[],users:[],approval:null,sections:null,carDB:null,log:[],moves:[],closings:[],custPay:[],voids:[],seal:null,lockInfo:{},seq:1};
+let DB=load();
+try{const sn=(DB.settings.shop||'').trim();if(!sn||sn==='محل المفاتيح'||sn==='محل مفاتيح'||sn==='أم رضا للمفاتيح'){DB.settings.shop='الحاجة أم رضا للمفاتيح'}}catch(e){}
+function load(){try{const d=JSON.parse(localStorage.getItem(KEY));return d?Object.assign(structuredClone(def),d):structuredClone(def)}catch(e){return structuredClone(def)}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(DB))}catch(e){if(!save.w){save.w=1;alert('تحذير: مش قادر أحفظ البيانات على الجهاز ('+(e&&e.name)+'). افتح الملف من Chrome أو Safari مباشرة.')}}}
+const uid=()=>DB.seq++;
+const $=s=>document.querySelector(s);
+const cur=()=>DB.settings.cur;
+const money=n=>(Math.round((+n||0)*100)/100).toLocaleString('ar-EG')+' '+cur();
+const dkey=(d=new Date())=>{const x=new Date(d);return x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0')};
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+const CATS=['مفتاح عادي','مفتاح سيارة','ريموت / كارت','كالون / قفل','خزنة','إكسسوار','أخرى'];
+const SERVICES=[
+['نسخ مفتاح عادي',10,0,'نسخ مفاتيح'],['نسخ مفتاح مسطح / أمان',30,0,'نسخ مفاتيح'],['قص مفتاح بالكود (Key Code)',150,0,'نسخ مفاتيح'],
+['نسخ مفتاح بشريحة + برمجة (فيه مفتاح شغال)',400,0,'مفاتيح سيارات'],['إضافة ريموت + برمجة (فيه مفتاح شغال)',450,0,'مفاتيح سيارات'],['برمجة ريموت فقط',200,0,'مفاتيح سيارات'],
+['ضايع مفتاح — عمل مفتاح من عدم (كل المفاتيح ضايعة)',1500,0,'مفاتيح سيارات'],['ضايع مفتاح بصمة (Smart Key / Push Start) من عدم',3000,0,'مفاتيح سيارات'],
+['مسح المفاتيح القديمة وبرمجة جديدة',300,0,'مفاتيح سيارات'],['استخراج مفتاح مكسور من السويتش',150,0,'مفاتيح سيارات'],['فتح سيارة بدون مفتاح',200,0,'مفاتيح سيارات'],['إصلاح / تغيير سويتش تشغيل',400,0,'مفاتيح سيارات'],
+['فتح باب شقة',150,0,'أقفال وأبواب'],['تغيير كالون',100,0,'أقفال وأبواب'],['صيانة قفل',60,0,'أقفال وأبواب'],['فتح خزنة',400,0,'أقفال وأبواب'],
+['رسوم انتقال (خدمة خارج المحل)',100,0,'رسوم'],['رسوم طوارئ / وقت متأخر',100,0,'رسوم']
+];
+
+// ============ التنقل ============
+let page='home',cart=[],PST=[],NAVBACK=false;
+function go(p){if(!ME)return;if(!guardPage(p))return;if(p!==page&&!NAVBACK){PST.push(page);if(PST.length>30)PST.shift()}page=p;document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.p===(p==='loss'?'sell':p==='moves'?'stock':p)));render();window.scrollTo(0,0)}
+function render(){
+ $('#shopName').textContent=DB.settings.shop;
+ $('#today').textContent=new Date().toLocaleDateString('ar-EG',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+ ({home:rHome,sell:rSell,stock:rStock,cust:rCust,supp:rSupp,exp:rExp,rep:rRep,settings:rSettings,moves:rMoves,log:rLog,users:rUsers,close:rClose,loss:rLoss})[page]();
+ if(page==='home')$('#app').insertAdjacentHTML('afterbegin','<img class="logo homelogo" alt="">');
+ if(page==='home'&&can('suppliers'))homeSupp();
+ initLogo();envWarn();applyView();
+}
+function openModal(h){$('#modalBody').innerHTML=h;$('#modal').classList.add('show')}
+function closeModal(){$('#modal').classList.remove('show')}
+$('#modal').addEventListener('click',e=>{if(e.target.id==='modal')closeModal()});
+
+// ============ الحسابات ============
+const saleTotal=s=>s.lines.reduce((a,l)=>a+l.price*l.qty,0)-(s.discount||0);
+const saleCost=s=>s.lines.reduce((a,l)=>a+(l.cost||0)*l.qty,0);
+function inRange(d,from,to){return d>=from&&d<=to}
+function summary(from,to){
+ const S=DB.sales.filter(s=>inRange(s.date,from,to));
+ const rev=S.reduce((a,s)=>a+saleTotal(s),0);
+ const cost=S.reduce((a,s)=>a+saleCost(s),0);
+ const exp=DB.expenses.filter(e=>inRange(e.date,from,to)).reduce((a,e)=>a+e.amount,0),loss=lossSum(from,to),wages=wageSum(from,to);
+ const paid=S.reduce((a,s)=>a+(s.paid??saleTotal(s)),0);
+ return{count:S.length,rev,cost,exp,loss,wages,profit:rev-cost-exp-loss-wages,debt:rev-paid}
+}
+
+// ============ الرئيسية ============
+function rHome(){
+ const t=dkey(),m=t.slice(0,8)+'01';
+ const d=summary(t,t),mo=summary(m,'9999');
+ const low=DB.items.filter(i=>!i.service&&i.qty<=DB.settings.low);
+ const debts=DB.customers.map(c=>({c,d:custDebt(c.id)})).filter(x=>x.d>0);
+ $('#app').innerHTML=`
+ <div class="grid">
+  <div class="stat g">مبيعات النهارده<b>${money(d.rev)}</b></div>
+  <div class="stat">عدد العمليات<b>${d.count}</b></div>
+  <div class="stat g">صافي ربح النهارده<b>${money(d.profit)}</b></div>
+  <div class="stat r">مصروفات النهارده (شامل المرتبات)<b>${money(d.exp+d.wages)}</b></div>
+  <div class="stat r">هالك وخسارة النهارده<b>${money(d.loss)}</b></div>
+ </div>
+ <div class="card" style="margin-top:12px"><h2>📅 الشهر الحالي</h2>
+  <div class="row"><div>مبيعات<br><b>${money(mo.rev)}</b></div><div>مصروفات<br><b>${money(mo.exp)}</b></div><div>مرتبات<br><b>${money(mo.wages)}</b></div><div>هالك<br><b>${money(mo.loss)}</b></div><div>صافي الربح<br><b style="color:${mo.profit>=0?'var(--ok)':'var(--bad)'}">${money(mo.profit)}</b></div></div></div>
+ <div class="card"><h2>⚠️ مخزون قليل (${low.length})</h2>
+  ${low.length?low.map(i=>`<div class="cart-i"><span>${esc(i.name)}</span><span class="tag low">باقي ${i.qty}</span></div>`).join(''):'<div class="empty">كل حاجة متوفرة ✅</div>'}</div>
+ <div class="card"><h2>💰 ديون العملاء (${debts.length})</h2>
+  ${debts.length?debts.map(x=>`<div class="cart-i"><span>${esc(x.c.name)} ${x.c.phone?'· '+esc(x.c.phone):''}</span><span class="tag low">${money(x.d)}</span></div>`).join(''):'<div class="empty">مفيش ديون 👍</div>'}</div>
+ <div class="card"><h2>🕘 آخر العمليات</h2>${recentSales(8)}</div>`;
+}
+function recentSales(n){
+ const S=[...DB.sales].reverse().slice(0,n);
+ if(!S.length)return '<div class="empty">لسه مفيش مبيعات</div>';
+ return `<div class="tw"><table><tr><th>#</th><th>التاريخ</th><th>العميل</th><th>الإجمالي</th><th></th></tr>`+S.map(s=>`<tr><td>${s.id}</td><td>${s.date}</td><td>${esc(custName(s.cust))}</td><td>${money(saleTotal(s))}</td><td><button class="btn s o" onclick="viewSale(${s.id})">عرض</button></td></tr>`).join('')+'</table></div>';
+}
+const custName=id=>id?(DB.customers.find(c=>c.id===id)?.name||'—'):'عميل نقدي';
+const custDebt=id=>DB.sales.filter(s=>s.cust===id).reduce((a,s)=>a+(saleTotal(s)-(s.paid??saleTotal(s))),0);
+
+// ============ البيع ============
+let sellCat='الكل',sellQ='';
+function rSell(){
+ const cats=['الكل','خدمات',...SECS()];
+ let list=DB.items.filter(i=>(sellCat==='الكل'||(sellCat==='خدمات'?i.service:(i.cat===sellCat||i.grp===sellCat)))&&(!sellQ||i.name.includes(sellQ))&&carFilter(i,sellBrand,sellModel));
+ $('#app').innerHTML=`
+ <div class="card"><button class="btn" style="width:100%;margin-bottom:8px" onclick="jobWizard()">🔑 شغلانة مفتاح سيارة (قطعة + مصنعية)</button>
+ ${lossOk()?'<button class="btn s d" style="width:100%;margin-bottom:8px" onclick="go(\'loss\')">🗑️ هالك وخسارة (تالف / ضايع)</button>':''}<input id="sq" placeholder="🔍 ابحث عن صنف أو خدمة..." value="${esc(sellQ)}" oninput="sellQ=this.value;rSellList()">
+ <div class="chips">${cats.map(c=>`<button class="chip ${c===sellCat?'on':''}" data-c="${esc(c)}" onclick="sellCat=this.dataset.c;rSell()">${esc(c)}</button>`).join('')}<button class="chip ${(showCars||sellBrand)?'on':''}" onclick="showCars=!showCars;if(!showCars){sellBrand='';sellModel=''}rSell()">🚗 حسب العربية</button>${can('stockEdit')?'<button class="chip" onclick="sectionsForm()">🗂️ أقسام +</button>':''}</div>
+ ${(showCars||sellBrand)?carCard():''}
+ <div id="sl"></div></div>
+ <div class="card"><h2>✍️ أضف بند بسعرك</h2>
+ <div class="chips">
+  <button class="chip" onclick="mq('مصنعية','labor')">🔧 مصنعية</button>
+  <button class="chip" onclick="mq('رسوم طوارئ','fee')">🚨 طوارئ</button>
+  <button class="chip" onclick="mq('رسوم انتقال','fee')">🚗 انتقال</button>
+  <button class="chip" onclick="mq('ريموت','part')">📡 ريموت</button>
+  <button class="chip" onclick="mq('سلاح (نصل المفتاح)','part')">🗡️ سلاح</button>
+  <button class="chip" onclick="mq('','part')">➕ بند تاني</button>
+ </div>
+ <div id="mf" style="display:none">
+  <label>اسم البند</label><input id="mn" placeholder="مثال: مصنعية برمجة / ريموت كيا">
+  <div class="row"><div><label>السعر</label><input id="mp" type="number" min="0"></div><div><label>الكمية</label><input id="mc" type="number" value="1" min="1"></div><div><label>تكلفة علينا</label><input id="mk" type="number" min="0" value="0"></div></div>
+  <div class="row"><button class="btn k" onclick="mAdd()">+ أضف للفاتورة</button><button class="btn o" onclick="$('#mf').style.display='none'">إلغاء</button></div>
+ </div></div>
+ <div class="card"><h2>🧾 الفاتورة الحالية</h2><div id="cart"></div></div>`;
+ rSellList();rCart();
+}
+function rSellList(){
+ const list=DB.items.filter(i=>(sellCat==='الكل'||(sellCat==='خدمات'?i.service:(i.cat===sellCat||i.grp===sellCat)))&&(!sellQ||i.name.includes(sellQ))&&carFilter(i,sellBrand,sellModel));
+ $('#sl').innerHTML=list.length?`<div class="tw"><table>`+list.map(i=>`<tr><td>${esc(i.name)}<br><small style="color:var(--mut)">${i.service?'خدمة':'متاح: '+i.qty}</small></td><td>${money(i.price)}</td><td><button class="btn s" onclick="addCart(${i.id})">+ أضف</button></td></tr>`).join('')+'</table></div>':'<div class="empty">مفيش أصناف. ضيف من تبويب المخزون.</div>';
+}
+function addCart(id){
+ const it=DB.items.find(i=>i.id===id);if(!it)return;
+ const l=cart.find(c=>c.id===id);
+ if(l){if(!it.service&&l.qty>=it.qty){alert('الكمية المتاحة '+it.qty+' بس');return}l.qty++}
+ else{if(!it.service&&it.qty<1){alert('الصنف خلص من المخزون');return}cart.push({id,name:it.name,price:it.price,cost:it.cost||0,qty:1,service:it.service,kind:it.service?(it.grp==='رسوم'?'fee':'labor'):'part'})}
+ rCart();
+}
+function cQty(i,d){const l=cart[i],it=DB.items.find(x=>x.id===l.id);
+ l.qty+=d;if(l.qty<=0)cart.splice(i,1);else if(it&&!it.service&&l.qty>it.qty){l.qty=it.qty;alert('الكمية المتاحة '+it.qty+' بس')}rCart()}
+function cPrice(i){const p=prompt('السعر الجديد:',cart[i].price);if(p!==null&&!isNaN(+p)&&+p>=0){cart[i].price=+p;rCart()}}
+const kindOf=l=>l.kind||(l.service?'labor':'part');
+function kindSums(lines){const r={part:0,labor:0,fee:0};lines.forEach(l=>{r[kindOf(l)]+=l.price*l.qty});return r}
+function sumsHtml(k){return [['part','🔩 القطع'],['labor','🔧 المصنعية'],['fee','🚨 رسوم (طوارئ / انتقال)']].filter(([x])=>k[x]>0).map(([x,l])=>`<div class="cart-i"><span>${l}</span><b>${money(k[x])}</b></div>`).join('')}
+let MK='part';
+function mq(name,kind){
+ MK=kind;$('#mf').style.display='';$('#mn').value=name;$('#mp').value='';$('#mk').value=0;$('#mc').value=1;
+ if(name)$('#mp').focus();else $('#mn').focus();
+}
+function mAdd(){
+ const n=$('#mn').value.trim(),pv=$('#mp').value,p=+pv,q=+$('#mc').value||1,c=+$('#mk').value||0;
+ if(!n){alert('اكتب اسم البند');return}
+ if(pv===''||!(p>=0)){alert('اكتب السعر');return}
+ cart.push({id:0,name:n,price:p,cost:c,qty:q,service:MK!=='part',kind:MK,manual:true});
+ $('#mf').style.display='none';rCart();
+}
+function rCart(){
+ const el=$('#cart');if(!el)return;
+ if(!cart.length){el.innerHTML='<div class="empty">الفاتورة فاضية</div>';return}
+ const k=kindSums(cart),sub=k.part+k.labor+k.fee,ord=['part','labor','fee'];
+ el.innerHTML=cart.map((l,i)=>({l,i})).sort((a,b)=>ord.indexOf(kindOf(a.l))-ord.indexOf(kindOf(b.l))).map(({l,i})=>`<div class="cart-i"><div>${esc(l.name)}${l.manual?' <span class="tag">يدوي</span>':''}<br><small onclick="cPrice(${i})" style="color:var(--main)">${money(l.price)} ✏️</small></div>
+ <div><button class="btn s o" onclick="cQty(${i},-1)">−</button> <b>${l.qty}</b> <button class="btn s o" onclick="cQty(${i},1)">+</button></div></div>`).join('')
+ +`<div class="sec">ملخص الفاتورة</div>${sumsHtml(k)}<div class="total">${money(sub)}</div><div class="row"><button class="btn k" onclick="checkout()">إتمام البيع</button><button class="btn d" onclick="cart=[];rCart()">إلغاء</button></div>`;
+}
+function checkout(){
+ const k=kindSums(cart),sub=k.part+k.labor+k.fee;
+ openModal(`<h2>إتمام البيع</h2>
+ ${sumsHtml(k)}
+ <div class="sec">إضافات سريعة بسعرك (اختياري)</div>
+ <div class="row"><div><label>🔧 مصنعية</label><input id="ck_l" type="number" min="0" oninput="upTot(${sub})"></div><div><label>🚨 طوارئ</label><input id="ck_e" type="number" min="0" oninput="upTot(${sub})"></div><div><label>🚗 انتقال</label><input id="ck_t" type="number" min="0" oninput="upTot(${sub})"></div></div>
+ <label>العميل</label><select id="cc" onchange="pickCars()"><option value="0">عميل نقدي</option>${DB.customers.map(c=>`<option value="${c.id}">${esc(c.name)}</option>`).join('')}</select>
+ <div id="carWrap"></div>
+ <label>👷 المهندس / الفني المنفّذ</label><select id="ck_w">${peopleOpts(0)}</select>
+ <label>خصم</label><input id="cd" type="number" value="0" min="0" oninput="upTot(${sub})">
+ <div class="total" id="ct">${money(sub)}</div>
+ <label>المدفوع</label><input id="cp" type="number" value="${sub}" min="0">
+ <label>طريقة الدفع</label><select id="cm">${payOpts()}</select>
+ <small style="color:var(--mut)">لو دفع أقل، الباقي بيتسجل دين على العميل (لازم تختار عميل).</small>
+ <label style="margin-top:8px">ملاحظات (موديل العربية / رقم الشقة...)</label><input id="cn">
+ <div class="row"><button class="btn k" onclick="doSale(${sub})">تأكيد</button><button class="btn o" onclick="closeModal()">رجوع</button></div>`);
+ if(PRE){$('#cc').value=PRE.cust;pickCars();if($('#cv'))$('#cv').value=PRE.car;PRE=null}
+}
+function extrasSum(){return ['ck_l','ck_e','ck_t'].reduce((a,id)=>a+(+($('#'+id)&&$('#'+id).value)||0),0)}
+function upTot(sub){const t=sub+extrasSum()-(+$('#cd').value||0);$('#ct').textContent=money(t);$('#cp').value=t}
+async function doSale(sub){
+ if(!can('sell')){alert('مش مسموح لك بالبيع');return}
+ const lines=cart.map(l=>({...l}));
+ [['ck_l','مصنعية','labor'],['ck_e','رسوم طوارئ','fee'],['ck_t','رسوم انتقال','fee']].forEach(([id,n,k])=>{
+  const v=+($('#'+id).value)||0;if(v>0)lines.push({id:0,name:n,price:v,cost:0,qty:1,service:true,kind:k,manual:true});
+ });
+ for(const l of lines){const it=l.id&&DB.items.find(i=>i.id===l.id);if(it&&!it.service)l.cost=it.cost||0;
+  if(!(l.price>=0)||!(l.qty>0)){alert('بند فيه قيمة غلط');return}
+  if(it&&!it.service&&l.qty>it.qty){alert('الكمية المتاحة من '+it.name+' هي '+it.qty+' بس');return}}
+ const total0=lines.reduce((a,l)=>a+l.price*l.qty,0),disc=+$('#cd').value||0,paid=+$('#cp').value||0,cust=+$('#cc').value||0,total=total0-disc;
+ if(disc<0||paid<0||disc>total0){alert('قيمة الخصم أو المدفوع غلط');return}
+ if(paid<total&&!cust){alert('اختار عميل علشان تسجل الباقي دين');return}
+ const why=[];
+ if(!isOwner()){
+  const lim=(ME.perms&&ME.perms.discountPct)||0;
+  if(disc>0&&disc>total0*lim/100)why.push('خصم '+money(disc)+' (الحد المسموح '+lim+'%)');
+  if(paid<total&&!can('credit'))why.push('بيع آجل — دين '+money(total-paid));
+  lines.forEach(l=>{const it=l.id&&DB.items.find(i=>i.id===l.id);
+   if(l.manual||!it){if(!can('manualLines'))why.push('بند يدوي: '+l.name+' بسعر '+l.price)}
+   else if(l.price!==it.price&&!can('editPrice'))why.push('تغيير سعر '+l.name+' من '+it.price+' إلى '+l.price);
+   if(it&&!it.service&&(it.cost||0)>0&&l.price<it.cost)why.push('بيع '+l.name+' بأقل من التكلفة');});
+ }
+ if(why.length&&!await askOwner('العملية دي محتاجة موافقة المالك',why))return;
+ const s={id:uid(),date:dkey(),time:new Date().toLocaleTimeString('ar-EG',{hour:'2-digit',minute:'2-digit'}),cust,car:+($('#cv')&&$('#cv').value)||0,lines,discount:disc,paid:Math.min(paid,total),paid0:Math.min(paid,total),method:$('#cm').value,note:$('#cn').value,u:ME.id,un:ME.name,tech:+($('#ck_w')&&$('#ck_w').value)||0,techn:personName(+($('#ck_w')&&$('#ck_w').value)||0)};
+ lines.forEach(l=>{const it=DB.items.find(i=>i.id===l.id);if(it&&!it.service)moveStock(it,-l.qty,'بيع فاتورة #'+s.id,s.id)});
+ DB.sales.push(s);audit('sale',{id:s.id,total,paid:s.paid,disc,cust,method:s.method,h:saleHash(s),...(why.length?{ok:why}:{})});
+ cart=[];closeModal();
+ viewSale(s.id,true);rSell();
+}
+function viewSale(id,fresh){
+ const s=DB.sales.find(x=>x.id===id);if(!s)return;
+ const tot=saleTotal(s);
+ openModal(`<h2>${fresh?'✅ تم البيع — ':''}فاتورة #${s.id}</h2>
+ <small>${s.date} ${s.time||''} · ${esc(custName(s.cust))}${s.un?' · 👤 '+esc(s.un):''}${s.techn?' · 🔧 '+esc(s.techn):''}</small>
+ ${custLines(s).map(l=>`<div class="cart-i"><span>${esc(l.name)} × ${l.qty}</span><span>${money(l.total)}</span></div>`).join('')}
+ ${s.discount?`<div class="cart-i"><span>خصم</span><span>- ${money(s.discount)}</span></div>`:''}
+ <div class="total">${money(tot)}</div>
+ ${(s.paid??tot)>0?`<div style="text-align:center;color:var(--mut)">طريقة الدفع: ${methodLabel(s.method)}</div>`:''}
+ ${(s.paid??tot)<tot?`<div style="color:var(--bad);text-align:center">متبقي: ${money(tot-s.paid)}</div>`:''}
+ ${s.car&&carLabel(s.car)?`<p>🚗 ${esc(carLabel(s.car))}</p>`:''}${s.note?`<p>📝 ${esc(s.note)}</p>`:''}
+ <div class="row"><button class="btn" onclick="printSale(${s.id})">🖨️ طباعة</button><button class="btn o" onclick="saleDetail(${s.id})">🔍 تفاصيل داخلية</button><button class="btn o" onclick="closeModal()">إغلاق</button>${fresh?'':`<button class="btn d" onclick="delSale(${s.id})">حذف</button>`}</div>`);
+}
+async function delSale(id){
+ const s=DB.sales.find(x=>x.id===id);if(!s)return;
+ if(!can('voidSale')){if(!await askOwner('إلغاء فاتورة #'+id,['إلغاء فاتورة بقيمة '+money(saleTotal(s))]))return}
+ else if(!confirm('إلغاء الفاتورة؟ هيتم إرجاع الكميات للمخزون.'))return;
+ s.lines.forEach(l=>{const it=DB.items.find(i=>i.id===l.id);if(it&&!it.service)moveStock(it,+l.qty,'إلغاء فاتورة #'+id,id)});
+ DB.voids.push({id,date:dkey(),by:ME.name,total:saleTotal(s),snap:s});
+ DB.sales=DB.sales.filter(x=>x.id!==id);audit('void',{id,total:saleTotal(s),lines:s.lines.map(l=>l.name+'×'+l.qty).join('، ')});closeModal();render();
+}
+// الفاتورة للعميل: من غير مصنعية/رسوم/ربح — الإضافات بتتضاف على سعر البند الأساسي
+function custLines(s){
+ const L=s.lines.map(l=>({name:l.name,qty:l.qty,total:l.price*l.qty,k:kindOf(l)}));
+ for(const base of ['part','labor','fee']){
+  const B=L.filter(x=>x.k===base);
+  if(B.length){B[0].total+=L.filter(x=>x.k!==base).reduce((a,x)=>a+x.total,0);return B.map(x=>({name:x.name,qty:x.qty,total:x.total}))}
+ }
+ return [];
+}
+async function saleDetail(id){
+ const s=DB.sales.find(x=>x.id===id);if(!s)return;
+ if(!can('reports')&&!await askOwner('عرض تفاصيل فاتورة #'+id,['الاطلاع على تفاصيل الفاتورة الداخلية (المصنعية والرسوم)']))return;
+ const tot=saleTotal(s),cost=saleCost(s),ic={part:'🔩',labor:'🔧',fee:'🚨'};
+ openModal(`<h2>🔍 تفاصيل داخلية — فاتورة #${s.id}</h2><small style="color:var(--bad)">داخلي — مش بيظهر للعميل ولا في الطباعة</small>
+ ${s.lines.map(l=>`<div class="cart-i"><span>${ic[kindOf(l)]} ${esc(l.name)} × ${l.qty}${can('viewCost')&&l.cost?'<br><small style="color:var(--mut)">تكلفة '+money(l.cost*l.qty)+'</small>':''}</span><span>${money(l.price*l.qty)}</span></div>`).join('')}
+ <div class="sec">ملخص</div>${sumsHtml(kindSums(s.lines))}${s.discount?`<div class="cart-i"><span>خصم</span><span>- ${money(s.discount)}</span></div>`:''}
+ <div class="total">${money(tot)}</div>${can('viewCost')?`<div class="cart-i"><span>الربح</span><b style="color:${tot-cost>=0?'var(--ok)':'var(--bad)'}">${money(tot-cost)}</b></div>`:''}
+ <button class="btn o" style="width:100%" onclick="viewSale(${s.id})">رجوع</button>`);
+}
+function printSale(id){
+ const s=DB.sales.find(x=>x.id===id),tot=saleTotal(s);
+ $('#receipt').innerHTML=`<div style="text-align:center"><img src="${LOGO}" style="width:90px"><h2>${esc(DB.settings.shop)}</h2><div style="font-size:12px">United Engineers</div>${DB.settings.phone?'<div>📞 '+esc(DB.settings.phone)+'</div>':''}<div>فاتورة #${s.id} · ${s.date}</div></div><hr>
+ <table style="width:100%">${custLines(s).map(l=>`<tr><td>${esc(l.name)} × ${l.qty}</td><td style="text-align:left">${money(l.total)}</td></tr>`).join('')}</table><hr>
+ ${s.discount?`<div>خصم: ${money(s.discount)}</div>`:''}<h3>الإجمالي: ${money(tot)}</h3>${(s.paid??tot)>0?'<div>طريقة الدفع: '+methodLabel(s.method).replace(/^\S+\s/,'').replace(/\s*\(.*\)/,'')+'</div>':''}${(s.paid??tot)<tot?'<div>المتبقي: '+money(tot-s.paid)+'</div>':''}<div style="text-align:center">شكراً لزيارتكم</div>`;
+ window.print();
+}
+
+// ============ المخزون ============
+let stockQ='';
+function rStock(){
+ const list=DB.items.filter(i=>(!stockQ||i.name.includes(stockQ))&&carFilter(i,stockBrand,stockModel));
+ $('#app').innerHTML=`<div class="card"><div class="row"><input id="sq2" placeholder="🔍 بحث..." value="${esc(stockQ)}" oninput="stockQ=this.value;rStock();const e=$('#sq2');e.focus();e.setSelectionRange(e.value.length,e.value.length)"><button class="btn" style="flex:0 0 auto;margin-bottom:8px" onclick="itemForm()">+ صنف</button></div>
+ <div class="row"><select onchange="stockBrand=this.value;stockModel='';rStock()"><option value="">كل العربيات</option>${brandNames().map(b=>`<option ${b===stockBrand?'selected':''}>${esc(b)}</option>`).join('')}</select>${stockBrand?`<select onchange="stockModel=this.value;rStock()"><option value="">كل الموديلات</option>${modelsOf(stockBrand).map(m=>`<option ${m===stockModel?'selected':''}>${esc(m)}</option>`).join('')}</select>`:''}</div>
+ <div class="row"><button class="btn s o" onclick="go('moves')">📜 سجل حركة المخزون</button><button class="btn s o" onclick="stocktake()">📋 جرد</button></div>
+ ${can('stockEdit')?'<div class="row"><button class="btn s o" onclick="sectionsForm()">🗂️ الأقسام</button><button class="btn s o" onclick="carsForm()">🚗 ماركات العربيات</button></div>':''}
+ <button class="btn s o" onclick="addDefaultServices()">+ إضافة خدمات المصنعية الجاهزة (أسعار تقديرية)</button>
+ <div class="tw" style="margin-top:8px">${list.length?`<table><tr><th>الصنف</th><th>الكمية</th><th class="costcol">التكلفة</th><th>السعر</th><th></th></tr>`+list.map(i=>`<tr><td>${esc(i.name)}<br><span class="tag">${i.service?esc(i.grp||'خدمة'):esc(i.cat)}</span>${i.brand?' <span class="tag ok">🚗 '+carTag(i)+'</span>':''}</td>
+ <td>${i.service?'—':`<span class="tag ${i.qty<=DB.settings.low?'low':'ok'}">${i.qty}</span>`}</td><td class="costcol">${money(i.cost||0)}</td><td>${money(i.price)}</td>
+ <td><button class="btn s o" onclick="itemForm(${i.id})">✏️</button></td></tr>`).join('')+'</table>':'<div class="empty">مفيش أصناف</div>'}</div></div>`;
+ const q=$('#app input');if(q&&document.activeElement===document.body){}
+}
+function itemForm(id){
+ const i=id?DB.items.find(x=>x.id===id):{name:'',cat:CATS[0],service:false,qty:0,cost:0,price:0};
+ openModal(`<h2>${id?'تعديل':'إضافة'} صنف</h2>
+ <label>الاسم</label><input id="fn" value="${esc(i.name)}" placeholder="مثال: مفتاح تويوتا كورولا">
+ <div class="row"><div><label>النوع</label><select id="ft" onchange="$('#fq').parentElement.style.display=this.value==='1'?'none':''"><option value="0" ${!i.service?'selected':''}>منتج</option><option value="1" ${i.service?'selected':''}>خدمة</option></select></div>
+ <div><label>القسم</label><select id="fc" onchange="$('#fcn').style.display=this.value==='__new'?'':'none'">${SECS().map(c=>`<option ${c===(i.service?i.grp:i.cat)?'selected':''}>${esc(c)}</option>`).join('')}<option value="__new">➕ قسم جديد...</option></select><input id="fcn" placeholder="اسم القسم الجديد" style="display:none"></div></div>
+ ${carFields(i)}
+ <div class="row"><div style="${i.service?'display:none':''}"><label>الكمية</label><input id="fq" type="number" value="${i.qty}"></div>
+ <div class="costcol"><label>التكلفة</label><input id="fk" type="number" value="${i.cost||0}"></div>
+ <div><label>سعر البيع</label><input id="fp" type="number" value="${i.price}"></div></div>
+ <div class="row"><button class="btn k" onclick="saveItem(${id||0})">حفظ</button>${id?`<button class="btn d" onclick="delItem(${id})">حذف</button>`:''}<button class="btn o" onclick="closeModal()">إلغاء</button></div>`);
+ fModels(i.model);
+}
+async function saveItem(id){
+ const name=$('#fn').value.trim();if(!name){alert('اكتب الاسم');return}
+ const svc=$('#ft').value==='1';
+ let sec=$('#fc').value;if(sec==='__new'){sec=$('#fcn').value.trim();if(!sec){alert('اكتب اسم القسم');return}if(!SECS().includes(sec)){DB.sections=SECS();DB.sections.push(sec);audit('section','إضافة قسم '+sec)}}
+ const o={name,service:svc,cat:svc?'خدمة':sec,qty:svc?0:Math.max(0,+$('#fq').value||0),cost:+$('#fk').value||0,price:+$('#fp').value||0};if(svc)o.grp=sec;
+ let br=$('#fbr').value,mo=$('#fmo').value;if(br==='__new')br=$('#fbrn').value.trim();if(mo==='__new')mo=$('#fmon').value.trim();
+ if(br){carEnsure(br,mo);o.brand=br;o.model=mo||''}else{o.brand='';o.model=''}
+ const old=id?DB.items.find(i=>i.id===id):null,ch=[];
+ if(old){if(!o.service&&o.qty!==old.qty)ch.push('كمية '+old.name+': '+old.qty+' → '+o.qty);if(o.price!==old.price)ch.push('سعر البيع '+old.price+' → '+o.price);if(o.cost!==(old.cost||0))ch.push('التكلفة '+(old.cost||0)+' → '+o.cost)}
+ else if(!o.service&&o.qty>0)ch.push('صنف جديد '+name+' بكمية '+o.qty);
+ if(ch.length&&!can('stockEdit')&&!await askOwner('تعديل صنف',ch))return;
+ if(old){const dq=o.service?0:o.qty-old.qty;const q=old.qty;Object.assign(old,o,{qty:q});if(dq)moveStock(old,dq,'تعديل يدوي',0);audit('item',ch.join(' | ')||('تعديل '+name))}
+ else{const it={id:uid(),...o,qty:0};DB.items.push(it);if(!o.service&&o.qty>0)moveStock(it,o.qty,'رصيد افتتاحي',0);audit('item','إضافة '+name+(o.qty?' كمية '+o.qty:''))}
+ closeModal();rStock();
+}
+async function delItem(id){const it=DB.items.find(i=>i.id===id);if(!it)return;if(!await askOwner('حذف صنف',['حذف '+it.name]))return;if(!confirm('حذف الصنف؟'))return;DB.items=DB.items.filter(i=>i.id!==id);audit('item','حذف '+it.name);closeModal();rStock()}
+
+
+// ============ الشعار + تخزين الملفات (IndexedDB) ============
+const LOGO='data:image/jpeg;base64,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';
+function initLogo(){
+ document.querySelectorAll('img.logo').forEach(i=>{if(i.getAttribute('src')!==LOGO)i.src=LOGO});
+ try{
+  const nm=(DB&&DB.settings&&DB.settings.shop)||'الحاجة أم رضا للمفاتيح';
+  document.title='United Engineers';const sp=document.getElementById('spName');if(sp)sp.textContent=nm;
+  if(!document.getElementById('fav')&&!document.querySelector('link[rel=manifest]')){
+   const mk=(rel,extra)=>{const l=document.createElement('link');l.rel=rel;l.href=LOGO;if(extra)l.id=extra;document.head.appendChild(l)};
+   mk('icon','fav');mk('apple-touch-icon');
+   try{const m={name:'United Engineers — '+nm,short_name:'United Engineers',dir:'rtl',lang:'ar',display:'standalone',start_url:'.',background_color:'#f5f1ea',theme_color:'#0f86c0',icons:[{src:LOGO,sizes:'512x512',type:'image/jpeg',purpose:'any'}]};
+    const l=document.createElement('link');l.rel='manifest';l.href=URL.createObjectURL(new Blob([JSON.stringify(m)],{type:'application/manifest+json'}));document.head.appendChild(l)}catch(e){}
+  }
+ }catch(e){}
+}
+function hideSplash(){const s=$('#splash');if(s)s.classList.add('off')}
+let _idb;
+function idb(){return _idb||(_idb=new Promise((res,rej)=>{const r=indexedDB.open('keyshop_files',1);r.onupgradeneeded=()=>r.result.createObjectStore('f',{keyPath:'id'});r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)}))}
+async function fTx(mode,fn){const d=await idb();return new Promise((res,rej)=>{const t=d.transaction('f',mode);const rq=fn(t.objectStore('f'));t.oncomplete=()=>res(rq&&rq.result);t.onerror=()=>rej(t.error)})}
+const MEM={},LSP='kf_';
+async function fPut(r){
+ try{await fTx('readwrite',s=>s.put(r));return 'idb'}catch(e){}
+ const data=await b2d(r.blob);
+ try{localStorage.setItem(LSP+r.id,JSON.stringify({id:r.id,name:r.name,type:r.type,data}));return 'ls'}catch(e){}
+ MEM[r.id]={id:r.id,name:r.name,type:r.type,data};return 'mem';
+}
+async function fGet(id){
+ try{const r=await fTx('readonly',s=>s.get(id));if(r)return r}catch(e){}
+ let o=null;try{const t=localStorage.getItem(LSP+id);if(t)o=JSON.parse(t)}catch(e){}
+ o=o||MEM[id];
+ return o?{id:o.id,name:o.name,type:o.type,blob:d2b(o.data)}:null;
+}
+async function fDel(id){try{await fTx('readwrite',s=>s.delete(id))}catch(e){}try{localStorage.removeItem(LSP+id)}catch(e){}delete MEM[id]}
+async function fAll(){
+ let a=[];try{a=(await fTx('readonly',s=>s.getAll()))||[]}catch(e){}
+ const seen=new Set(a.map(x=>x.id));
+ try{for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&k.startsWith(LSP)){const o=JSON.parse(localStorage.getItem(k));if(!seen.has(o.id)){a.push({id:o.id,name:o.name,type:o.type,blob:d2b(o.data)});seen.add(o.id)}}}}catch(e){}
+ for(const id in MEM)if(!seen.has(id)){const o=MEM[id];a.push({id:o.id,name:o.name,type:o.type,blob:d2b(o.data)})}
+ return a;
+}
+async function fClear(){try{await fTx('readwrite',s=>s.clear())}catch(e){}try{Object.keys(localStorage).filter(k=>k.startsWith(LSP)).forEach(k=>localStorage.removeItem(k))}catch(e){}for(const k in MEM)delete MEM[k]}
+const b2d=b=>new Promise(r=>{const f=new FileReader();f.onload=()=>r(f.result);f.readAsDataURL(b)});
+function d2b(u){const p=u.split(',');const m=p[0].match(/:(.*?);/)[1];const s=atob(p[1]);const a=new Uint8Array(s.length);for(let i=0;i<s.length;i++)a[i]=s.charCodeAt(i);return new Blob([a],{type:m})}
+function shrink(file){return new Promise(res=>{if(!file.type.startsWith('image/'))return res(file);const img=new Image(),u=URL.createObjectURL(file);
+ img.onload=()=>{const k=Math.min(1,1400/Math.max(img.width,img.height)),c=document.createElement('canvas');c.width=Math.round(img.width*k);c.height=Math.round(img.height*k);c.getContext('2d').drawImage(img,0,0,c.width,c.height);c.toBlob(b=>{URL.revokeObjectURL(u);res(b||file)},'image/jpeg',.75)};
+ img.onerror=()=>{URL.revokeObjectURL(u);res(file)};img.src=u})}
+
+// ============ العملاء والعربيات ============
+let custQ='',PRE=null,CD=null,CNEW=[],COLD=[];
+const MAKES=['تويوتا','هيونداي','كيا','شيفروليه','نيسان','رينو','بيجو','سيتروين','فيات','سكودا','فولكس فاجن','مرسيدس','بي إم دبليو','أودي','أوبل','ميتسوبيشي','سوزوكي','هوندا','فورد','شيري','إم جي','بي واي دي','جيلي','جيب','لادا','مازدا','سيات','دايو','دايهاتسو','سوبارو','لكزس','هافال','بروتون'];
+const CHIPS=['ID13','ID33','ID40','ID42','ID44','ID46','ID47','ID48','ID49','ID4C','ID4D','ID60','ID63','ID70','ID72','ID73','Megamos AES','Hitag AES','غير معروف'];
+const FREQS=['315 MHz','433.92 MHz','434 MHz','868 MHz','902 MHz'];
+const BLADES=['HU66','HU92','HU100','HU101','HU64','TOY43','TOY47','TOY48','HYN14R','HY20','HY22','MIT8','NSN14','SIP22','VA2','VA6','HON66','FO21','FO38','DAT17'];
+const KEYTYPES=['مفتاح عادي (بدون شريحة)','مفتاح بشريحة','مفتاح ريموت','ريموت سكينة','كارت / Smart Key (بصمة)','مفتاح أمان / مسطح'];
+const CAR_FIELDS=[['make','الماركة'],['model','الموديل'],['year','سنة الصنع'],['color','اللون'],['plate','رقم اللوحة'],['engine','رقم الموتور'],['vin','رقم الشاسيه (VIN)'],['ktype','نوع المفتاح'],['kcount','عدد المفاتيح'],['chip','الشريحة'],['freq','تردد الريموت'],['blade','شكل الشفرة'],['kcode','كود المفتاح'],['pin','كود الإيموبيلايزر / PIN']];
+const SECRET=['kcode','pin'];
+const carName=c=>[c.make,c.model,c.year].filter(Boolean).join(' ')||'عربية';
+const carLabel=id=>{const c=DB.cars.find(x=>x.id===id);return c?carName(c)+(c.plate?' — '+c.plate:''):''};
+const custCars=id=>DB.cars.filter(c=>c.cust===id);
+const dl=(id,a)=>`<datalist id="${id}">${a.map(x=>`<option value="${x}">`).join('')}</datalist>`;
+
+function rCust(){
+ $('#app').innerHTML=`<div class="card"><input id="cq" placeholder="🔍 اسم / موبايل / لوحة / شاسيه..." value="${esc(custQ)}" oninput="custQ=this.value;rCustList()">
+ <div class="row"><button class="btn" onclick="custForm()">+ عميل جديد</button><button class="btn o" onclick="importCarModal()">⬆️ استيراد ملف عربية</button></div>
+ </div>
+ <div class="card" id="cl"></div>`;
+ rCustList();
+}
+function rCustList(){
+ const q=custQ.trim().toLowerCase();
+ const list=DB.customers.filter(c=>!q||(c.name+' '+(c.phone||'')).toLowerCase().includes(q)||custCars(c.id).some(x=>[x.plate,x.vin,x.make,x.model].join(' ').toLowerCase().includes(q)));
+ $('#cl').innerHTML=list.length?`<div class="tw"><table><tr><th>العميل</th><th>الدين</th><th></th></tr>`+list.map(c=>{const d=custDebt(c.id),cs=custCars(c.id);
+  return`<tr><td><b>${esc(c.name)}</b>${c.phone?`<br><a href="tel:${esc(c.phone)}">${esc(c.phone)}</a>`:''}${cs.length?'<br>'+cs.map(x=>`<span class="tag" onclick="carView(${x.id})" style="cursor:pointer">🚗 ${esc(x.plate||x.model||'عربية')}</span>`).join(' '):''}</td>
+  <td>${d>0?`<span class="tag low">${money(d)}</span>`:'—'}</td>
+  <td style="white-space:nowrap"><button class="btn s" onclick="custCarsModal(${c.id})">🚗 ${cs.length}</button> <button class="btn s o" onclick="custForm(${c.id})">✏️</button>${d>0?` <button class="btn s k" onclick="payDebt(${c.id})">سداد</button>`:''}</td></tr>`}).join('')+'</table></div>':'<div class="empty">مفيش عملاء</div>';
+}
+function custForm(id){
+ const c=id?DB.customers.find(x=>x.id===id):{name:'',phone:'',note:''};
+ openModal(`<h2>${id?'تعديل':'إضافة'} عميل</h2><label>الاسم</label><input id="cn1" value="${esc(c.name)}"><label>الموبايل</label><input id="cp1" type="tel" value="${esc(c.phone)}"><label>ملاحظات</label><input id="cm1" value="${esc(c.note||'')}">
+ <div class="row"><button class="btn k" onclick="saveCust(${id||0})">حفظ</button>${id?`<button class="btn d" onclick="delCust(${id})">حذف</button>`:''}<button class="btn o" onclick="closeModal()">إلغاء</button></div>`);
+}
+function saveCust(id){if(!id&&!can('addCust')){alert('مش مسموح');return}const n=$('#cn1').value.trim();if(!n){alert('اكتب الاسم');return}
+ const o={name:n,phone:$('#cp1').value.trim(),note:$('#cm1').value};
+ if(id)Object.assign(DB.customers.find(c=>c.id===id),o);else DB.customers.push({id:uid(),...o});audit('cust',(id?'تعديل ':'إضافة ')+n);closeModal();rCust()}
+async function delCust(id){
+ if(custDebt(id)>0){alert('العميل عليه دين، سدده الأول');return}
+ if(!await askOwner('حذف عميل',['حذف العميل '+custName(id)+' وملفات عربياته']))return;
+ const cs=custCars(id);
+ if(!confirm('حذف العميل'+(cs.length?' وكل ملفات عربياته ('+cs.length+')':'')+'؟'))return;
+ cs.forEach(c=>(c.files||[]).forEach(f=>fDel(f.id)));
+ DB.cars=DB.cars.filter(c=>c.cust!==id);DB.customers=DB.customers.filter(c=>c.id!==id);audit('custdel','حذف عميل رقم '+id);closeModal();rCust()}
+function custCarsModal(cid){
+ const c=DB.customers.find(x=>x.id===cid),cs=custCars(cid);
+ openModal(`<h2>🚗 عربيات ${esc(c.name)}</h2>${cs.length?cs.map(x=>`<div class="cart-i"><div><b>${esc(carName(x))}</b><br><small style="color:var(--mut)">${esc(x.plate||'—')} · ${esc(x.vin||'بدون شاسيه')}</small></div><button class="btn s" onclick="carView(${x.id})">فتح الملف</button></div>`).join(''):'<div class="empty">مفيش عربيات متسجلة</div>'}
+ <div class="row" style="margin-top:10px"><button class="btn k" onclick="carForm(${cid})">+ عربية جديدة</button><button class="btn o" onclick="closeModal()">إغلاق</button></div>`);
+}
+
+// ---- نموذج العربية ----
+function vinHint(el){
+ const h=$('#vh');if(!h||!el)return;const v=el.value.trim().toUpperCase();
+ if(!v){h.textContent='';return}
+ const ok=/^[A-HJ-NPR-Z0-9]{17}$/.test(v);
+ h.style.color=ok?'var(--ok)':'#b45309';
+ h.textContent=ok?'✔ رقم شاسيه سليم الشكل (17 خانة)':'⚠ المفروض 17 خانة حروف وأرقام بدون I و O و Q (الحالي '+v.length+') — راجع الرقم';
+}
+function carForm(cid,id){
+ const old=id?DB.cars.find(x=>x.id===id):null;
+ CD=old?JSON.parse(JSON.stringify(old)):{id:uid(),cust:cid,files:[],date:dkey()};
+ CNEW=[];COLD=(CD.files||[]).map(f=>f.id);
+ const v=k=>esc(CD[k]??'');
+ openModal(`<h2>${old?'تعديل ملف عربية':'ملف عربية جديدة'}</h2>
+ <div class="sec">بيانات العربية</div>
+ <div class="row"><div><label>الماركة</label><input id="a_make" list="dl_make" value="${v('make')}"></div><div><label>الموديل</label><input id="a_model" value="${v('model')}"></div></div>
+ <div class="row"><div><label>سنة الصنع</label><input id="a_year" type="number" value="${v('year')}"></div><div><label>اللون</label><input id="a_color" value="${v('color')}"></div></div>
+ <div class="row"><div><label>رقم اللوحة</label><input id="a_plate" value="${v('plate')}"></div><div><label>رقم الموتور</label><input id="a_engine" value="${v('engine')}"></div></div>
+ <label>رقم الشاسيه (VIN)</label><input id="a_vin" value="${v('vin')}" maxlength="25" style="direction:ltr;text-transform:uppercase" oninput="vinHint(this)"><div id="vh" style="font-size:12px;margin:-4px 0 8px"></div>
+ <div class="sec">بيانات المفتاح</div>
+ <div class="row"><div><label>نوع المفتاح</label><select id="a_ktype"><option value="">—</option>${KEYTYPES.map(k=>`<option ${CD.ktype===k?'selected':''}>${k}</option>`).join('')}</select></div><div><label>عدد المفاتيح المسلمة</label><input id="a_kcount" type="number" value="${v('kcount')}"></div></div>
+ <div class="row"><div><label>نوع الشريحة (Chip)</label><input id="a_chip" list="dl_chip" value="${v('chip')}" style="direction:ltr"></div><div><label>تردد الريموت</label><input id="a_freq" list="dl_freq" value="${v('freq')}" style="direction:ltr"></div></div>
+ <div class="row"><div><label>شكل الشفرة (Blade)</label><input id="a_blade" list="dl_blade" value="${v('blade')}" style="direction:ltr"></div><div><label>كود المفتاح (Key Code)</label><input id="a_kcode" value="${v('kcode')}" style="direction:ltr"></div></div>
+ <label>كود الإيموبيلايزر / PIN</label><input id="a_pin" value="${v('pin')}" style="direction:ltr">
+ <label class="chk"><input type="checkbox" id="a_lost" ${CD.lost?'checked':''}> ضاعت كل المفاتيح (All keys lost)</label>
+ <label class="chk"><input type="checkbox" id="a_own" ${CD.own?'checked':''}> تم التأكد من ملكية العربية (رخصة / بطاقة)</label>
+ <label>ملاحظات</label><textarea id="a_notes" rows="2">${v('notes')}</textarea>
+ <div class="sec">ملفات مرفقة (أي نوع ملف: صور، PDF، مستندات...)</div>
+ <div class="thumbs" id="a_files"></div><div id="a_prog" style="font-size:12px;color:var(--main2);margin-bottom:6px"></div>
+ <div class="row"><label class="btn o">📎 اختيار ملف<input type="file" multiple style="display:none" onchange="addFiles(this.files);this.value=''"></label><label class="btn o">📷 تصوير<input type="file" accept="image/*" capture="environment" style="display:none" onchange="addFiles(this.files);this.value=''"></label></div>
+ <label class="btn o" style="margin-top:8px">📁 اختيار مجلد كامل<input type="file" webkitdirectory multiple style="display:none" onchange="addFolder(this.files);this.value=''"></label>
+ 
+ 
+ ${dl('dl_make',MAKES)}${dl('dl_chip',CHIPS)}${dl('dl_freq',FREQS)}${dl('dl_blade',BLADES)}
+ <div class="row" style="margin-top:12px"><button class="btn k" onclick="saveCar()">حفظ</button><button class="btn o" onclick="cancelCar()">إلغاء</button></div>`);
+ drawFiles(CD.files,'a_files',true);vinHint($('#a_vin'));
+}
+async function addFiles(fl){
+ fl=[...fl];
+ for(const f of fl){
+  if(f.size>25*1024*1024){alert(f.name+' كبير (أكتر من 25 ميجا)');continue}
+  const b=await shrink(f),id='f'+uid()+'_'+Date.now(),type=b.type||f.type||'application/octet-stream';
+  let mode;try{mode=await fPut({id,name:f.name,type,blob:b})}catch(e){alert('تعذر حفظ الملف '+f.name+' ('+((e&&e.message)||e)+')');continue}
+  if(mode!=='idb'&&!addFiles.w){addFiles.w=1;alert(mode==='ls'?'الملف اتحفظ بطريقة بديلة (مساحة محدودة). الأفضل تفتح البرنامج من Chrome أو Safari مباشرة.':'التخزين الدائم للملفات مش شغال هنا — الملف هيفضل لحد ما تقفل الصفحة بس. افتح البرنامج من Chrome أو Safari مباشرة.')}
+  CD.files.push({id,name:f.name,type});CNEW.push(id);
+ }
+ drawFiles(CD.files,'a_files',true);
+}
+async function addFolder(fl){
+ fl=[...fl];
+ if(!fl.length){alert('المتصفح ما رجّعش ملفات من المجلد. جرب "اختيار ملف" وحدد كل الملفات من جوه المجلد.');return}
+ const MAX=100;
+ if(fl.length>MAX&&!confirm('المجلد فيه '+fl.length+' ملف. هضيف أول '+MAX+' بس. تكمل؟'))return;
+ const list=fl.slice(0,MAX);let n=0,big=0;const p=$('#a_prog');
+ for(const f of list){
+  if(p)p.textContent='جاري الإضافة '+(n+1)+' / '+list.length+' ...';
+  if(f.size>25*1024*1024){big++;continue}
+  const nm=f.webkitRelativePath||f.name,b=await shrink(f),id='f'+uid()+'_'+Date.now(),type=b.type||f.type||'application/octet-stream';
+  try{await fPut({id,name:nm,type,blob:b})}catch(e){continue}
+  CD.files.push({id,name:nm,type});CNEW.push(id);n++;
+  if(n%5===0)drawFiles(CD.files,'a_files',true);
+ }
+ if(p)p.textContent='';
+ drawFiles(CD.files,'a_files',true);
+ alert('تمت إضافة '+n+' ملف'+(big?' — '+big+' ملف أكبر من 25 ميجا اتخطّيته':'')+(fl.length>MAX?' — وباقي المجلد ضيفه في مرة تانية':''));
+}
+async function drawFiles(list,elId,rm){
+ const el=$('#'+elId);if(!el)return;
+ const parts=[];
+ for(const m of list||[]){
+  const rec=await fGet(m.id);
+  const th=rec&&rec.type&&rec.type.startsWith('image/')?`<img src="${URL.createObjectURL(rec.blob)}" onclick="openFile('${m.id}')">`:`<span onclick="openFile('${m.id}')">${/\.(zip|rar|7z)$/i.test(m.name)?'🗜️':/\.(docx?|txt)$/i.test(m.name)?'📝':/\.(xlsx?|csv)$/i.test(m.name)?'📊':'📄'}<br>${esc(m.name.split('/').pop().slice(0,14))}</span>`;
+  parts.push(`<div class="th">${th}${rm?`<button class="x" onclick="rmFile('${m.id}')">✕</button>`:''}</div>`);
+ }
+ el.innerHTML=parts.join('')||'<small style="color:var(--mut)">لا توجد مرفقات</small>';
+}
+function rmFile(id){CD.files=CD.files.filter(f=>f.id!==id);drawFiles(CD.files,'a_files',true)}
+async function openFile(id){
+ const r=await fGet(id);if(!r){alert('الملف مش موجود');return}
+ const u=URL.createObjectURL(r.blob);
+ const body=r.type&&r.type.startsWith('image/')?`<img src="${u}" style="width:100%;border-radius:8px">`:`<div class="empty">📄 ${esc(r.name)}</div>`;
+ $('#viewerBody').innerHTML=`<h2>${esc(r.name)}</h2>${body}<div class="row" style="margin-top:10px"><a class="btn k" style="text-align:center;text-decoration:none" href="${u}" download="${esc(r.name)}" target="_blank">فتح / تنزيل</a><button class="btn o" onclick="$('#viewer').classList.remove('show')">إغلاق</button></div>`;
+ $('#viewer').classList.add('show');
+}
+function saveCar(){
+ const g=k=>$('#a_'+k).value.trim();
+ const o={make:g('make'),model:g('model'),year:g('year'),color:g('color'),plate:g('plate'),engine:g('engine'),vin:g('vin').toUpperCase(),ktype:$('#a_ktype').value,kcount:g('kcount'),chip:g('chip'),freq:g('freq'),blade:g('blade'),kcode:g('kcode'),pin:g('pin'),lost:$('#a_lost').checked,own:$('#a_own').checked,notes:g('notes')};
+ if(!o.make&&!o.model&&!o.plate&&!o.vin){alert('اكتب ماركة أو لوحة أو شاسيه على الأقل');return}
+ if(o.vin&&DB.cars.some(c=>c.vin===o.vin&&c.id!==CD.id)&&!confirm('رقم الشاسيه ده متسجل قبل كده على عربية تانية. تكمل؟'))return;
+ Object.assign(CD,o);
+ COLD.filter(id=>!CD.files.some(f=>f.id===id)).forEach(fDel);
+ const i=DB.cars.findIndex(c=>c.id===CD.id);if(i>=0)DB.cars[i]=CD;else DB.cars.push(CD);
+ save();const id=CD.id;CD=null;CNEW=[];carView(id);
+}
+function cancelCar(){
+ CNEW.forEach(fDel);const c=CD;CD=null;CNEW=[];
+ if(c&&DB.cars.some(x=>x.id===c.id))carView(c.id);else closeModal();
+}
+
+// ---- عرض ملف العربية ----
+function carView(id){
+ const c=DB.cars.find(x=>x.id===id);if(!c)return;
+ const cu=DB.customers.find(x=>x.id===c.cust);
+ const hist=DB.sales.filter(s=>s.car===id).reverse();
+ const kv=CAR_FIELDS.map(([k,l])=>{
+  if(!c[k])return'';
+  return SECRET.includes(k)?`<b>${l}</b><span class="secret" data-v="${esc(c[k])}" onclick="this.textContent=this.dataset.v">اضغط للإظهار 👁</span>`:`<b>${l}</b><span>${esc(c[k])}</span>`;
+ }).join('');
+ openModal(`<h2>🚗 ${esc(carName(c))}</h2>
+ <small>${esc(cu?cu.name:'—')}${cu&&cu.phone?' · '+esc(cu.phone):''}</small>
+ <div class="kv" style="margin-top:8px">${kv}${c.lost?'<b>الحالة</b><span>ضاعت كل المفاتيح</span>':''}${c.own?'<b>الملكية</b><span>تم التأكد ✔</span>':''}</div>
+ ${c.notes?`<p>📝 ${esc(c.notes)}</p>`:''}
+ <div class="sec">المرفقات</div><div class="thumbs" id="v_files"></div>
+ <div class="sec">سجل الشغل (${hist.length})</div>
+ ${hist.map(s=>`<div class="cart-i"><span>${s.date} · ${esc(s.lines.map(l=>l.name).join('، '))}</span><b>${money(saleTotal(s))}</b></div>`).join('')||'<div class="empty">لا يوجد شغل مسجل</div>'}
+ <div class="row" style="margin-top:12px"><button class="btn k" onclick="startSale(${c.cust},${c.id})">🛒 شغل جديد</button><button class="btn" onclick="carForm(${c.cust},${c.id})">✏️ تعديل</button></div>
+ <div class="row"><button class="btn o" onclick="printCar(${c.id})">🖨️ طباعة / PDF</button><button class="btn o" onclick="exportCar(${c.id})">⬇️ تنزيل ملف</button></div>
+ <div class="row"><button class="btn o" onclick="custCarsModal(${c.cust})">رجوع</button><button class="btn d" onclick="delCar(${c.id})">حذف</button></div>`);
+ drawFiles(c.files,'v_files',false);
+}
+function startSale(cust,car){PRE={cust,car};closeModal();go('sell');alert('اختار الخدمات وبعدين اضغط "إتمام البيع" — العميل والعربية هيتحددوا تلقائي.')}
+function pickCars(){
+ const c=+$('#cc').value,w=$('#carWrap');if(!w)return;
+ if(!c){w.innerHTML='';return}
+ const cs=custCars(c);
+ w.innerHTML=cs.length?`<label>العربية</label><select id="cv"><option value="0">— بدون —</option>${cs.map(x=>`<option value="${x.id}">${esc(carLabel(x.id))}</option>`).join('')}</select>`:'';
+}
+function delCar(id){
+ if(!confirm('حذف ملف العربية بكل مرفقاته؟'))return;
+ const c=DB.cars.find(x=>x.id===id);const cu=c.cust;
+ (c.files||[]).forEach(f=>fDel(f.id));
+ DB.cars=DB.cars.filter(x=>x.id!==id);save();custCarsModal(cu);
+}
+
+// ---- طباعة وتصدير ملف العربية ----
+async function printCar(id){
+ const c=DB.cars.find(x=>x.id===id),cu=DB.customers.find(x=>x.id===c.cust);
+ const imgs=[];for(const m of c.files||[]){const r=await fGet(m.id);if(r&&r.type&&r.type.startsWith('image/'))imgs.push(await b2d(r.blob))}
+ const hist=DB.sales.filter(s=>s.car===id);
+ const rows=CAR_FIELDS.filter(([k])=>c[k]).map(([k,l])=>`<tr><td style="color:#666;width:38%">${l}</td><td><b>${esc(c[k])}</b></td></tr>`).join('');
+ $('#receipt').innerHTML=`<div style="text-align:center"><img src="${LOGO}" style="width:90px"><h2 style="margin:4px 0">${esc(DB.settings.shop)}</h2>${DB.settings.phone?'<div>📞 '+esc(DB.settings.phone)+'</div>':''}<h3>ملف عربية</h3></div>
+ <div>العميل: <b>${esc(cu?cu.name:'—')}</b> ${cu&&cu.phone?'· '+esc(cu.phone):''}</div><div>تاريخ الملف: ${esc(c.date||'')}</div><hr>
+ <table style="width:100%;border-collapse:collapse">${rows}</table>
+ ${c.lost?'<p>⚠ ضاعت كل المفاتيح</p>':''}${c.own?'<p>✔ تم التأكد من ملكية العربية</p>':''}${c.notes?'<p>ملاحظات: '+esc(c.notes)+'</p>':''}
+ ${hist.length?'<hr><b>سجل الشغل</b>'+hist.map(s=>`<div>${s.date} — ${esc(s.lines.map(l=>l.name).join('، '))} — ${money(saleTotal(s))}</div>`).join(''):''}
+ ${imgs.map(u=>`<img src="${u}" style="max-width:48%;margin:6px">`).join('')}`;
+ window.print();
+}
+async function exportCar(id){
+ const c=DB.cars.find(x=>x.id===id),cu=DB.customers.find(x=>x.id===c.cust);
+ const files=[];for(const m of c.files||[]){const r=await fGet(m.id);if(r)files.push({name:m.name,type:r.type,data:await b2d(r.blob)})}
+ const out={kind:'keyshop-car',v:1,exported:dkey(),shop:DB.settings.shop,customer:cu?{name:cu.name,phone:cu.phone}:null,
+  car:{...c,files:undefined,cust:undefined,id:undefined},files,
+  history:DB.sales.filter(s=>s.car===id).map(s=>({date:s.date,total:saleTotal(s),items:s.lines.map(l=>l.name+'×'+l.qty).join(' + '),note:s.note||''}))};
+ shareModal('ملف_عربية_'+(c.plate||c.vin||id)+'.json',JSON.stringify(out,null,1),'ملف العربية جاهز','application/json');
+}
+let XF=null;
+function xmsg(m){const e=$('#xmsg');if(e)e.textContent=m}
+function shareModal(name,text,title,type){
+ XF={name,text,type:type||'application/json'};
+ openModal(`<h2>✅ ${esc(title)}</h2><p style="font-size:13px;color:var(--mut)">${esc(name)} — ${Math.max(1,Math.round(text.length/1024))} KB</p>
+ <div class="row"><button class="btn k" onclick="doShare()">📤 مشاركة / حفظ</button><button class="btn o" onclick="doDownload()">⬇️ تنزيل</button></div>
+ <button class="btn o" style="width:100%;margin-top:8px" onclick="doCopy()">📋 نسخ المحتوى</button>
+ ${window.showDirectoryPicker?'<button class="btn o" style="width:100%;margin-top:8px" onclick="doSaveFolder()">💾 حفظ في مجلد أختاره</button>':''}
+ <div id="xmsg" style="font-size:13px;margin:10px 0;color:var(--main2)"></div>
+ <button class="btn o" onclick="closeModal()" style="width:100%">إغلاق</button>`);
+}
+async function doShare(){
+ for(const t of [XF.type,'text/plain']){
+  try{
+   const f=new File([XF.text],XF.name,{type:t});
+   if(navigator.canShare&&navigator.canShare({files:[f]})){await navigator.share({files:[f],title:XF.name});xmsg('تمت المشاركة ✔');return}
+  }catch(e){if(e&&e.name==='AbortError')return}
+ }
+ xmsg('المشاركة مش متاحة على الجهاز ده — جرب "تنزيل" أو "نسخ المحتوى".');
+}
+function doDownload(){
+ try{download(XF.name,XF.text,XF.type);xmsg('لو التنزيل ما ظهرش، استخدم "مشاركة" أو "نسخ المحتوى".')}catch(e){xmsg('فشل التنزيل: '+e.message)}
+}
+async function doSaveFolder(){
+ try{const dir=await showDirectoryPicker({mode:'readwrite'});const h=await dir.getFileHandle(XF.name,{create:true});const w=await h.createWritable();await w.write(XF.text);await w.close();xmsg('اتحفظ في المجلد ✔')}
+ catch(e){if(!e||e.name!=='AbortError')xmsg('تعذر الحفظ في المجلد: '+((e&&e.message)||''))}
+}
+async function doCopy(){
+ try{await navigator.clipboard.writeText(XF.text);xmsg('تم النسخ ✔ — الصقه في ملاحظات أو واتساب، ولما تحتاجه استورده بـ "لصق المحتوى".');return}catch(e){}
+ try{const t=document.createElement('textarea');t.value=XF.text;t.style.position='fixed';t.style.opacity='0';document.body.appendChild(t);t.select();const ok=document.execCommand('copy');t.remove();xmsg(ok?'تم النسخ ✔':'تعذر النسخ على الجهاز ده')}catch(e){xmsg('تعذر النسخ على الجهاز ده')}
+}
+function importCarModal(){
+ openModal(`<h2>⬆️ استيراد ملف عربية</h2>
+ <label class="btn o">📂 اختيار الملف<input type="file" style="display:none" onchange="importCar(this.files[0]);this.value=''"></label>
+ <label style="margin-top:12px">أو الصق محتوى الملف هنا</label><textarea id="imp_t" rows="4" style="direction:ltr"></textarea>
+ <div class="row"><button class="btn k" onclick="importText($('#imp_t').value)">استيراد</button><button class="btn o" onclick="closeModal()">إلغاء</button></div>`);
+}
+function importCar(f){if(!f)return;const r=new FileReader();r.onload=()=>importText(r.result);r.onerror=()=>alert('تعذر قراءة الملف');r.readAsText(f)}
+async function importText(t){
+ try{
+  const d=JSON.parse(t);if(d.kind!=='keyshop-car'||!d.car)throw new Error('مش ملف عربية من البرنامج');
+  const dc=d.customer||{};
+  let cu=DB.customers.find(x=>(dc.phone&&x.phone===dc.phone)||(dc.name&&x.name===dc.name));
+  if(!cu){cu={id:uid(),name:dc.name||'عميل مستورد',phone:dc.phone||'',note:''};DB.customers.push(cu)}
+  const car={...d.car,id:uid(),cust:cu.id,files:[]};
+  for(const x of d.files||[]){const id='f'+uid()+'_'+Date.now();await fPut({id,name:x.name,type:x.type,blob:d2b(x.data)});car.files.push({id,name:x.name,type:x.type})}
+  DB.cars.push(car);save();rCust();carView(car.id);
+ }catch(e){alert('الملف غير صالح: '+((e&&e.message)||''))}
+}
+let ENVWD=0;
+const inFrame=()=>{try{return window.self!==window.top||location.origin==='null'}catch(e){return true}};
+const isWV=()=>inFrame()||/; wv\)|FBAN|FBAV|Instagram/.test(navigator.userAgent)||location.protocol==='content:';
+function envWarn(){
+ return;
+ $('#app').insertAdjacentHTML('afterbegin','<div class="card" style="background:#fef3c7;color:#92400e;font-size:13px">⚠️ الملف مفتوح جوه معاينة تطبيق (Claude / واتساب...) وده بيمنع <b>اختيار الملفات والتنزيل</b> وممكن يضيع البيانات. حمّل الملف على التليفون وافتحه من <b>Chrome</b> (أو Safari على الآيفون).<br><button class="btn s o" style="margin-top:6px" onclick="ENVWD=1;this.parentElement.remove()">فهمت</button></div>');
+}
+async function diag(){
+ const r=[];const ok=(n,v,d)=>r.push([n,v,d||'']);
+ try{localStorage.setItem('_t','1');localStorage.removeItem('_t');ok('حفظ البيانات',true)}catch(e){ok('حفظ البيانات',false,e&&e.name)}
+ try{const id='_diag'+Date.now();await fTx('readwrite',s=>s.put({id,name:'t',type:'text/plain',blob:new Blob(['x'])}));const g=await fTx('readonly',s=>s.get(id));await fTx('readwrite',s=>s.delete(id));ok('حفظ المرفقات (دائم)',!!g)}catch(e){ok('حفظ المرفقات (دائم)',false,'هيستخدم بديل مؤقت')}
+ let sh=false;try{sh=!!(navigator.canShare&&navigator.canShare({files:[new File(['x'],'a.txt',{type:'text/plain'})]}))}catch(e){}
+ ok('المشاركة (Share)',sh,sh?'':'مش متاحة — استخدم تنزيل أو نسخ');
+ ok('النسخ للحافظة',!!(navigator.clipboard&&navigator.clipboard.writeText),'');
+ ok('طريقة فتح الملف',!isWV(),isWV()?'متصفح داخلي — افتحه من Chrome/Safari':location.protocol);
+ openModal(`<h2>🩺 نتيجة الفحص</h2>${r.map(x=>`<div class="cart-i"><span>${x[1]?'✅':'❌'} ${x[0]}</span><small style="color:var(--mut)">${esc(x[2])}</small></div>`).join('')}<button class="btn o" style="width:100%;margin-top:10px" onclick="closeModal()">إغلاق</button>`);
+}
+
+// ============ المصروفات ============
+function rExp0(){
+ const L=[...DB.expenses].reverse();
+ $('#app').innerHTML=`<div class="card"><h2>تسجيل مصروف</h2><div class="row"><input id="en" placeholder="البيان (إيجار، كهرباء، خامات...)"><input id="ea" type="number" placeholder="المبلغ"></div><button class="btn" onclick="addExp()">+ إضافة</button></div>
+ <div class="card"><h2>السجل</h2><div class="tw">${L.length?`<table><tr><th>التاريخ</th><th>البيان</th><th>المبلغ</th><th></th></tr>`+L.map(e=>`<tr><td>${e.date}</td><td>${esc(e.name)}</td><td>${money(e.amount)}</td><td><button class="btn s d" onclick="delExp(${e.id})">✕</button></td></tr>`).join('')+'</table>':'<div class="empty">مفيش مصروفات</div>'}</div></div>`;
+}
+function addExp(){if(!can('expenses')){alert('مش مسموح');return}const n=$('#en').value.trim(),a=+$('#ea').value;if(!n||!(a>0)){alert('اكتب البيان والمبلغ');return}const x={id:uid(),date:dkey(),name:n,amount:a,un:ME.name};DB.expenses.push(x);audit('exp',{id:x.id,amount:a,name:n});rExp()}
+async function delExp(id){const x=DB.expenses.find(e=>e.id===id);if(!x)return;if(!await askOwner('حذف مصروف',['حذف مصروف "'+x.name+'" بمبلغ '+x.amount]))return;DB.expenses=DB.expenses.filter(e=>e.id!==id);audit('expdel',{id,amount:x.amount,name:x.name});rExp()}
+
+// ============ التقارير ============
+let RM='month',RREF=dkey(),rFrom=null,rTo=null;
+const fmtD=(s,o)=>new Date(s+'T12:00:00').toLocaleDateString('ar-EG',o||{day:'numeric',month:'short'});
+function rangeOf(mode,ref){
+ const d=new Date(ref+'T12:00:00');
+ if(mode==='day')return[ref,ref];
+ if(mode==='week'){const wd=(d.getDay()+1)%7,s=new Date(d);s.setDate(d.getDate()-wd);const e=new Date(s);e.setDate(s.getDate()+6);return[dkey(s),dkey(e)]}
+ if(mode==='month'){const y=d.getFullYear(),m=d.getMonth();return[dkey(new Date(y,m,1,12)),dkey(new Date(y,m+1,0,12))]}
+ if(mode==='year'){const y=d.getFullYear();return[y+'-01-01',y+'-12-31']}
+ return[rFrom||dkey(),rTo||dkey()];
+}
+function shiftRef(mode,ref,dir){
+ const d=new Date(ref+'T12:00:00');
+ if(mode==='day')d.setDate(d.getDate()+dir);
+ else if(mode==='week')d.setDate(d.getDate()+7*dir);
+ else if(mode==='month')d.setMonth(d.getMonth()+dir,1);
+ else if(mode==='year')d.setFullYear(d.getFullYear()+dir);
+ return dkey(d);
+}
+function rangeLabel(mode,f,t){
+ if(mode==='day')return fmtD(f,{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+ if(mode==='month')return fmtD(f,{month:'long',year:'numeric'});
+ if(mode==='year')return fmtD(f,{year:'numeric'});
+ return 'من '+fmtD(f,{day:'numeric',month:'short',year:'numeric'})+' إلى '+fmtD(t,{day:'numeric',month:'short',year:'numeric'});
+}
+function fullStats(from,to){
+ const S=DB.sales.filter(x=>inRange(x.date,from,to));
+ let parts=0,labor=0,fees=0,costP=0,costL=0,disc=0,total=0,paid=0;
+ S.forEach(s=>{
+  s.lines.forEach(l=>{const v=l.price*l.qty,c=(l.cost||0)*l.qty;if(l.service){if(kindOf(l)==='fee')fees+=v;else labor+=v;costL+=c}else{parts+=v;costP+=c}});
+  disc+=s.discount||0;const t=saleTotal(s);total+=t;paid+=Math.min(s.paid??t,t);
+ });
+ const exp=DB.expenses.filter(e=>inRange(e.date,from,to)).reduce((a,e)=>a+e.amount,0),loss=lossSum(from,to),wages=wageSum(from,to);
+ const P=DB.purchases.filter(p=>inRange(p.date,from,to));
+ const purTotal=P.reduce((a,p)=>a+p.total,0);
+ const supPaid=P.reduce((a,p)=>a+(p.paid||0),0)+DB.supPay.filter(x=>inRange(x.date,from,to)).reduce((a,x)=>a+x.amount,0);
+ const byM={};S.forEach(s=>{const m=s.method||'cash';byM[m]=(byM[m]||0)+(s.paid0??s.paid??saleTotal(s))});DB.custPay.filter(x=>inRange(x.date,from,to)).forEach(x=>{const m=x.method||'cash';byM[m]=(byM[m]||0)+x.amount});
+ return{byM,S,count:S.length,parts,labor,fees,costP,costL,disc,total,paid,debt:total-paid,exp,loss,wages,L:DB.losses.filter(x=>inRange(x.date,from,to)),profit:total-costP-costL-exp-loss-wages,purTotal,supPaid};
+}
+function buckets(mode,from,to,S){
+ const b=[];
+ if(mode==='year'){
+  const y=+from.slice(0,4);
+  for(let m=1;m<=12;m++)b.push({k:y+'-'+String(m).padStart(2,'0'),l:new Date(y,m-1,1).toLocaleDateString('ar-EG',{month:'short'}),v:0});
+  S.forEach(s=>{const x=b.find(z=>z.k===s.date.slice(0,7));if(x)x.v+=saleTotal(s)});
+ }else{
+  const d=new Date(from+'T12:00:00'),e=new Date(to+'T12:00:00');let n=0;
+  while(d<=e&&n<400){b.push({k:dkey(d),l:String(d.getDate()),v:0});d.setDate(d.getDate()+1);n++}
+  S.forEach(s=>{const x=b.find(z=>z.k===s.date);if(x)x.v+=saleTotal(s)});
+ }
+ return b;
+}
+function repMode(m){if(m==='custom'){const r=rangeOf(RM,RREF);rFrom=r[0];rTo=r[1]}RM=m;rRep()}
+function repShift(d){RREF=shiftRef(RM,RREF,d);rRep()}
+function rRep(){
+ const[f,t]=rangeOf(RM,RREF),st=fullStats(f,t);
+ const modes=[['day','يومي'],['week','أسبوعي'],['month','شهري'],['year','سنوي'],['custom','مخصص']];
+ const top={};st.S.forEach(x=>x.lines.forEach(l=>{top[l.name]=top[l.name]||{q:0,v:0};top[l.name].q+=l.qty;top[l.name].v+=l.qty*l.price}));
+ const tl=Object.entries(top).sort((a,b)=>b[1].v-a[1].v).slice(0,10);
+ const bk=RM==='day'?[]:buckets(RM,f,t,st.S),mx=Math.max(1,...bk.map(b=>b.v));
+ const stockVal=DB.items.filter(i=>!i.service).reduce((a,i)=>a+i.qty*(i.cost||0),0);
+ const nav=RM==='custom'
+  ?`<div class="row"><div><label>من</label><input type="date" value="${f}" onchange="rFrom=this.value;rRep()"></div><div><label>إلى</label><input type="date" value="${t}" onchange="rTo=this.value;rRep()"></div></div>`
+  :`<div class="row" style="align-items:center"><button class="btn s o" style="flex:0 0 auto" onclick="repShift(-1)">▶</button><div style="text-align:center;font-weight:700">${rangeLabel(RM,f,t)}${RM==='week'?`<br><small style="color:var(--mut)">${fmtD(f)} ← ${fmtD(t)}</small>`:''}</div><button class="btn s o" style="flex:0 0 auto" onclick="repShift(1)">◀</button></div><div style="text-align:center;margin-top:8px"><button class="btn s o" onclick="RREF=dkey();rRep()">الرجوع للنهارده</button></div>`;
+ const tr=(l,v,c)=>`<tr><td>${l}</td><td style="text-align:left;font-weight:600;${c?'color:'+c:''}">${v}</td></tr>`;
+ $('#app').innerHTML=`<div class="card"><div class="chips">${modes.map(([k,l])=>`<button class="chip ${RM===k?'on':''}" onclick="repMode('${k}')">${l}</button>`).join('')}</div>${nav}</div>
+ <div class="grid"><div class="stat g">المبيعات (صافي)<b>${money(st.total)}</b></div><div class="stat ${st.profit>=0?'g':'r'}">صافي الربح<b>${money(st.profit)}</b></div><div class="stat">عدد الفواتير<b>${st.count}</b></div><div class="stat r">المصروفات<b>${money(st.exp)}</b></div><div class="stat r">الهالك والخسائر<b>${money(st.loss)}</b></div></div>
+ <div class="card" style="margin-top:12px"><h2>🧮 تفصيل الحساب</h2><table>
+ ${tr('إيراد القطع (مفاتيح / ريموتات / كوالين)',money(st.parts))}
+ ${tr('إيراد المصنعية والخدمات',money(st.labor))}
+ ${st.fees?tr('رسوم طوارئ / انتقال',money(st.fees)):''}
+ ${st.disc?tr('الخصومات','- '+money(st.disc),'var(--bad)'):''}
+ ${tr('تكلفة القطع',money(st.costP))}
+ ${st.costL?tr('تكلفة المصنعية (كود / فني)',money(st.costL)):''}
+ ${tr('ربح القطع',money(st.parts-st.costP))}
+ ${tr('ربح المصنعية والرسوم',money(st.labor+st.fees-st.costL))}
+ ${tr('المصروفات','- '+money(st.exp),'var(--bad)')}
+ ${st.wages?tr('المرتبات والأجور','- '+money(st.wages),'var(--bad)'):''}
+ ${st.loss?tr('هالك وخسائر (تالف / ضايع)','- '+money(st.loss),'var(--bad)'):''}
+ ${tr('<b>صافي الربح</b>','<b>'+money(st.profit)+'</b>',st.profit>=0?'var(--ok)':'var(--bad)')}
+ </table></div>
+ ${lossCard(st.L)}
+ <div class="card"><h2>💵 التحصيل والموردين</h2><table>
+ ${tr('المحصّل من العملاء',money(st.paid))}
+ ${Object.entries(st.byM).filter(([k,v])=>v>0).map(([k,v])=>tr('&nbsp;&nbsp;— '+methodLabel(k),money(v))).join('')}
+ ${tr('ديون جديدة على العملاء',money(st.debt),st.debt>0?'var(--bad)':'')}
+ ${tr('توريدات من الموردين',money(st.purTotal))}
+ ${tr('المدفوع للموردين',money(st.supPaid))}
+ </table></div>
+ ${bk.length?`<div class="card"><h2>📈 المبيعات</h2><div class="bars">${bk.map(b=>`<div class="bar" title="${b.k}: ${money(b.v)}"><i style="height:${Math.round(b.v/mx*90)}px"></i><small>${b.l}</small></div>`).join('')}</div></div>`:''}
+ <div class="card"><h2>🏆 الأكثر مبيعاً</h2>${tl.length?`<table><tr><th>الصنف</th><th>الكمية</th><th>القيمة</th></tr>`+tl.map(([n,v])=>`<tr><td>${esc(n)}</td><td>${v.q}</td><td>${money(v.v)}</td></tr>`).join('')+'</table>':'<div class="empty">لا بيانات</div>'}</div>
+ <div class="card"><h2>📦 قيمة المخزون (بالتكلفة)</h2><b style="font-size:20px">${money(stockVal)}</b></div>
+ <div class="card"><h2>🧾 الفواتير (${st.count})</h2>${st.S.length?`<div class="tw"><table><tr><th>#</th><th>التاريخ</th><th>العميل</th><th>الإجمالي</th><th></th></tr>`+[...st.S].reverse().map(x=>`<tr><td>${x.id}</td><td>${x.date}</td><td>${esc(custName(x.cust))}</td><td>${money(saleTotal(x))}</td><td><button class="btn s o" onclick="viewSale(${x.id})">عرض</button></td></tr>`).join('')+'</table></div>':'<div class="empty">لا فواتير في الفترة</div>'}
+ <div class="row noprint" style="margin-top:8px"><button class="btn o" onclick="printReport()">🖨️ طباعة التقرير</button><button class="btn o" onclick="exportCSV()">⬇️ تصدير Excel</button></div></div>`;
+}
+function printReport(){
+ const[f,t]=rangeOf(RM,RREF),st=fullStats(f,t);
+ const r=(l,v)=>`<tr><td>${l}</td><td style="text-align:left">${v}</td></tr>`;
+ $('#receipt').innerHTML=`<div style="text-align:center"><img src="${LOGO}" style="width:80px"><h2>${esc(DB.settings.shop)}</h2><div style="font-size:12px">United Engineers</div><h3>تقرير ${({day:'يومي',week:'أسبوعي',month:'شهري',year:'سنوي',custom:'فترة'})[RM]}</h3><div>${rangeLabel(RM,f,t)}</div></div><hr>
+ <table style="width:100%">${r('عدد الفواتير',st.count)}${r('إيراد القطع',money(st.parts))}${r('إيراد المصنعية',money(st.labor))}${r('رسوم طوارئ / انتقال',money(st.fees))}${r('الخصومات',money(st.disc))}${r('<b>المبيعات (صافي)</b>','<b>'+money(st.total)+'</b>')}${r('تكلفة القطع والمصنعية',money(st.costP+st.costL))}${r('المصروفات',money(st.exp))}${r('المرتبات والأجور',money(st.wages))}${r('هالك وخسائر',money(st.loss))}${r('<b>صافي الربح</b>','<b>'+money(st.profit)+'</b>')}${r('المحصّل',money(st.paid))}${r('ديون جديدة',money(st.debt))}${r('توريدات الموردين',money(st.purTotal))}${r('المدفوع للموردين',money(st.supPaid))}</table>`;
+ window.print();
+}
+function exportCSV(){
+ const[f,t]=rangeOf(RM,RREF),S=DB.sales.filter(x=>inRange(x.date,f,t));
+ let c='﻿رقم,التاريخ,العميل,العربية,القطع,المصنعية,الخصم,الإجمالي,المدفوع,التفاصيل\n';
+ S.forEach(s=>{
+  const p=s.lines.filter(l=>!l.service).reduce((a,l)=>a+l.price*l.qty,0),w=s.lines.filter(l=>l.service).reduce((a,l)=>a+l.price*l.qty,0);
+  c+=[s.id,s.date,'"'+custName(s.cust)+'"','"'+(s.car?carLabel(s.car):'')+'"',p,w,s.discount||0,saleTotal(s),s.paid??saleTotal(s),'"'+s.lines.map(l=>l.name+'×'+l.qty).join(' + ')+'"'].join(',')+'\n';
+ });
+ shareModal('تقرير_'+f+'_'+t+'.csv',c,'ملف التقرير جاهز','text/csv');
+}
+
+// ============ الموردين ============
+let supQ='',PD=null;
+const supById=id=>DB.suppliers.find(x=>x.id===id);
+function supBal(id){
+ const s=supById(id);if(!s)return 0;
+ return (+s.opening||0)+DB.purchases.filter(p=>p.supplier===id).reduce((a,p)=>a+p.total-(p.paid||0),0)-DB.supPay.filter(p=>p.supplier===id).reduce((a,p)=>a+p.amount,0);
+}
+const lastPur=id=>{const L=DB.purchases.filter(p=>p.supplier===id);return L.length?L.reduce((a,b)=>(b.date>a.date||(b.date===a.date&&b.id>a.id))?b:a):null};
+const lineTxt=p=>p.lines.map(l=>l.name+' × '+l.qty).join('، ');
+const waLink=ph=>'https://wa.me/'+String(ph||'').replace(/\D/g,'').replace(/^0/,'20');
+function rSupp(){
+ const tot=DB.suppliers.reduce((a,s)=>a+Math.max(0,supBal(s.id)),0);
+ $('#app').innerHTML=`<div class="card"><input id="sup_q" placeholder="🔍 اسم المورد / تليفون / بيورد إيه..." value="${esc(supQ)}" oninput="supQ=this.value;rSuppList()">
+ <div class="row"><button class="btn" onclick="supForm()">+ مورد جديد</button><button class="btn k" onclick="purForm()">📦 توريد بضاعة</button></div></div>
+ <div class="stat r" style="margin-bottom:12px">إجمالي المستحق للموردين<b>${money(tot)}</b></div>
+ <div class="card" id="sl2"></div>`;
+ rSuppList();
+}
+function rSuppList(){
+ const q=supQ.trim().toLowerCase();
+ const L=DB.suppliers.filter(s=>!q||[s.name,s.phone,s.phone2,s.supplies,s.address].join(' ').toLowerCase().includes(q));
+ $('#sl2').innerHTML=L.length?`<div class="tw"><table><tr><th>المورد</th><th>المستحق له</th><th>آخر توريد</th><th></th></tr>`+L.map(s=>{const b=supBal(s.id),lp=lastPur(s.id);
+  return`<tr><td><b>${esc(s.name)}</b>${s.phone?`<br><a href="tel:${esc(s.phone)}">${esc(s.phone)}</a>`:''}${s.supplies?`<br><small style="color:var(--mut)">${esc(s.supplies)}</small>`:''}</td>
+  <td>${b>0?`<span class="tag low">${money(b)}</span>`:b<0?`<span class="tag ok">له عندنا ${money(-b)} زيادة</span>`:'—'}</td>
+  <td>${lp?lp.date+'<br><small style="color:var(--mut)">'+money(lp.total)+'</small>':'—'}</td>
+  <td><button class="btn s" onclick="supView(${s.id})">فتح</button></td></tr>`}).join('')+'</table></div>':'<div class="empty">مفيش موردين — دوس "+ مورد جديد"</div>';
+}
+function supForm(id){
+ const s=id?supById(id):{name:'',phone:'',phone2:'',address:'',supplies:'',opening:0,notes:''};
+ openModal(`<h2>${id?'تعديل':'إضافة'} مورد</h2>
+ <label>اسم المورد / الشركة</label><input id="s_n" value="${esc(s.name)}">
+ <div class="row"><div><label>موبايل</label><input id="s_p" type="tel" value="${esc(s.phone)}"></div><div><label>موبايل تاني</label><input id="s_p2" type="tel" value="${esc(s.phone2||'')}"></div></div>
+ <label>العنوان</label><input id="s_a" value="${esc(s.address||'')}" placeholder="المنطقة / الشارع / المحل">
+ <label>بيورد إيه</label><input id="s_s" value="${esc(s.supplies||'')}" placeholder="مثال: مفاتيح خام، ريموتات، كوالين">
+ <label>رصيد سابق مستحق له (فلوسه اللي عليا قبل ما أستخدم البرنامج)</label><input id="s_o" type="number" value="${+s.opening||0}">
+ <label>ملاحظات</label><input id="s_m" value="${esc(s.notes||'')}">
+ <div class="row"><button class="btn k" onclick="supSave(${id||0})">حفظ</button>${id?`<button class="btn d" onclick="supDel(${id})">حذف</button>`:''}<button class="btn o" onclick="closeModal()">إلغاء</button></div>`);
+}
+function supSave(id){
+ const n=$('#s_n').value.trim();if(!n){alert('اكتب اسم المورد');return}
+ const o={name:n,phone:$('#s_p').value.trim(),phone2:$('#s_p2').value.trim(),address:$('#s_a').value.trim(),supplies:$('#s_s').value.trim(),opening:+$('#s_o').value||0,notes:$('#s_m').value.trim()};
+ if(id)Object.assign(supById(id),o);else DB.suppliers.push({id:uid(),createdAt:dkey(),...o});
+ save();closeModal();if(page==='supp')rSupp();
+}
+function supDel(id){
+ if(DB.purchases.some(p=>p.supplier===id)||DB.supPay.some(p=>p.supplier===id)){alert('المورد عليه حركة توريد أو سداد، مينفعش يتمسح.');return}
+ if(confirm('حذف المورد؟')){DB.suppliers=DB.suppliers.filter(s=>s.id!==id);save();closeModal();rSupp()}
+}
+function supView(id){
+ const s=supById(id);if(!s)return;
+ const b=supBal(id),lp=lastPur(id);
+ const P=DB.purchases.filter(p=>p.supplier===id).sort((x,y)=>y.date.localeCompare(x.date)||y.id-x.id).slice(0,8);
+ const Y=DB.supPay.filter(p=>p.supplier===id).sort((x,y)=>y.date.localeCompare(x.date)||y.id-x.id).slice(0,8);
+ openModal(`<h2>🏭 ${esc(s.name)}</h2>
+ <div class="kv">${s.phone?`<b>موبايل</b><span><a href="tel:${esc(s.phone)}">${esc(s.phone)}</a> · <a href="${waLink(s.phone)}" target="_blank">واتساب</a></span>`:''}${s.phone2?`<b>موبايل تاني</b><span><a href="tel:${esc(s.phone2)}">${esc(s.phone2)}</a></span>`:''}${s.address?`<b>العنوان</b><span>${esc(s.address)}</span>`:''}${s.supplies?`<b>بيورد</b><span>${esc(s.supplies)}</span>`:''}${s.notes?`<b>ملاحظات</b><span>${esc(s.notes)}</span>`:''}</div>
+ <div class="total" style="color:${b>0?'var(--bad)':'var(--ok)'}">${b>0?'مستحق له: '+money(b):b<0?'له عندنا زيادة: '+money(-b):'الحساب مسدد ✔'}</div>
+ <div class="sec">آخر بضاعة استلمتها منه</div>
+ ${lp?`<div class="cart-i"><span>${lp.date}<br><small style="color:var(--mut)">${esc(lineTxt(lp))}</small></span><span>${money(lp.total)}<br><small style="color:var(--mut)">مدفوع ${money(lp.paid||0)}</small></span></div>`:'<div class="empty">لسه ما استلمتش منه بضاعة</div>'}
+ <div class="row" style="margin-top:8px"><button class="btn k" onclick="purForm(${id})">📦 توريد جديد</button><button class="btn" onclick="payForm(${id})">💵 سداد</button></div>
+ <div class="sec">آخر التوريدات</div>
+ ${P.map(p=>`<div class="cart-i" onclick="purView(${p.id})" style="cursor:pointer"><span>${p.date} · ${esc(lineTxt(p).slice(0,40))}</span><b>${money(p.total)}</b></div>`).join('')||'<div class="empty">لا يوجد</div>'}
+ <div class="sec">آخر المدفوعات</div>
+ ${Y.map(p=>`<div class="cart-i"><span>${p.date}${p.note?' · '+esc(p.note):''}</span><b>${money(p.amount)}</b></div>`).join('')||'<div class="empty">لا يوجد</div>'}
+ <div class="row" style="margin-top:12px"><button class="btn o" onclick="printSup(${id})">🖨️ كشف حساب</button><button class="btn o" onclick="supForm(${id})">✏️ تعديل</button></div>
+ <button class="btn o" style="width:100%;margin-top:8px" onclick="closeModal();rSupp()">إغلاق</button>`);
+}
+function payForm(sid){
+ const b=supBal(sid);
+ openModal(`<h2>💵 سداد لـ ${esc(supById(sid).name)}</h2><div style="text-align:center;color:var(--mut)">المستحق الحالي: ${money(Math.max(0,b))}</div>
+ <label>المبلغ</label><input id="y_a" type="number" min="0" value="${b>0?b:''}">
+ <label>التاريخ</label><input id="y_d" type="date" value="${dkey()}">
+ <label>ملاحظة</label><input id="y_n" placeholder="مثال: دفعة تحت الحساب">
+ <div class="row"><button class="btn k" onclick="paySave(${sid})">تسجيل السداد</button><button class="btn o" onclick="supView(${sid})">رجوع</button></div>`);
+}
+function paySave(sid){
+ const a=+$('#y_a').value;if(!(a>0)){alert('اكتب المبلغ');return}
+ DB.supPay.push({id:uid(),date:$('#y_d').value||dkey(),supplier:sid,amount:a,note:$('#y_n').value.trim()});
+ save();supView(sid);
+}
+function purForm(sid){
+ if(!DB.suppliers.length){alert('ضيف مورد الأول من زرار "+ مورد جديد"');return}
+ PD={supplier:sid||DB.suppliers[0].id,lines:[]};
+ openModal(`<h2>📦 توريد بضاعة</h2>
+ <label>المورد</label><select id="p_s">${DB.suppliers.map(s=>`<option value="${s.id}" ${s.id===PD.supplier?'selected':''}>${esc(s.name)}</option>`).join('')}</select>
+ <label>تاريخ الاستلام</label><input id="p_d" type="date" value="${dkey()}">
+ <div class="sec">الأصناف</div>
+ <select id="p_i" onchange="purPick()"></select>
+ <div class="row"><div><label>الكمية</label><input id="p_q" type="number" value="1" min="1"></div><div><label>تكلفة الوحدة</label><input id="p_c" type="number" min="0"></div></div>
+ <button class="btn o" style="width:100%;margin-bottom:8px" onclick="purAdd()">+ أضف الصنف</button>
+ <div id="p_l"></div>
+ <label>المدفوع للمورد دلوقتي</label><input id="p_p" type="number" min="0" value="0">
+ <label>رقم فاتورة المورد / ملاحظات</label><input id="p_n">
+ <div class="row"><button class="btn k" onclick="purSave()">حفظ التوريد</button><button class="btn o" onclick="closeModal()">إلغاء</button></div>`);
+ purOptions();purLines();
+}
+function purOptions(sel){
+ const el=$('#p_i');if(!el)return;
+ el.innerHTML='<option value="">— اختار صنف —</option>'+DB.items.filter(i=>!i.service).map(i=>`<option value="${i.id}" ${i.id===sel?'selected':''}>${esc(i.name)} (متاح ${i.qty})</option>`).join('')+'<option value="new">➕ صنف جديد...</option>';
+}
+function purPick(){
+ const v=$('#p_i').value;
+ if(v==='new'){
+  const n=(prompt('اسم الصنف الجديد:')||'').trim();if(!n){purOptions();return}
+  const p=+prompt('سعر البيع للصنف (تقدر تعدله بعدين):','0')||0;
+  const it={id:uid(),name:n,cat:CATS[0],service:false,qty:0,cost:0,price:p};DB.items.push(it);save();purOptions(it.id);$('#p_c').value='';return;
+ }
+ const it=DB.items.find(i=>i.id===+v);if(it)$('#p_c').value=it.lastCost??it.cost??'';
+}
+function purAdd(){
+ const id=+$('#p_i').value,q=+$('#p_q').value,cv=$('#p_c').value,c=+cv,it=DB.items.find(i=>i.id===id);
+ if(!it){alert('اختار صنف');return}
+ if(!(q>0)){alert('اكتب كمية صحيحة');return}
+ if(cv===''||!(c>=0)){alert('اكتب تكلفة الوحدة');return}
+ PD.lines.push({id,name:it.name,qty:q,cost:c});$('#p_q').value=1;$('#p_c').value='';$('#p_i').value='';purLines();
+}
+function purLines(){
+ const t=PD.lines.reduce((a,l)=>a+l.qty*l.cost,0);
+ $('#p_l').innerHTML=PD.lines.length?PD.lines.map((l,i)=>`<div class="cart-i"><span>${esc(l.name)} × ${l.qty}<br><small style="color:var(--mut)">${money(l.cost)} للوحدة</small></span><span>${money(l.qty*l.cost)} <button class="btn s d" onclick="PD.lines.splice(${i},1);purLines()">✕</button></span></div>`).join('')+`<div class="total">${money(t)}</div>`:'<div class="empty">لسه ما ضفتش أصناف</div>';
+}
+function purSave(){
+ if(!PD.lines.length){alert('ضيف صنف واحد على الأقل');return}
+ const sid=+$('#p_s').value,total=PD.lines.reduce((a,l)=>a+l.qty*l.cost,0);
+ let paid=+$('#p_p').value||0;if(paid>total){alert('المدفوع أكبر من إجمالي الفاتورة. لو دفعت تحت الحساب سجله من زرار "سداد".');return}
+ PD.lines.forEach(l=>{
+  const it=DB.items.find(i=>i.id===l.id);if(!it)return;
+  const nq=it.qty+l.qty;
+  it.cost=nq>0?((it.qty*(it.cost||0))+(l.qty*l.cost))/nq:l.cost;
+  it.lastCost=l.cost;it.lastSup=sid;moveStock(it,l.qty,'توريد',0);
+ });
+ const pid=uid();DB.purchases.push({id:pid,date:$('#p_d').value||dkey(),supplier:sid,lines:PD.lines.map(l=>({...l})),total,paid,note:$('#p_n').value.trim(),un:ME.name});
+ audit('purchase',{id:pid,total,paid});PD=null;supView(sid);
+}
+function purView(id){
+ const p=DB.purchases.find(x=>x.id===id);if(!p)return;
+ openModal(`<h2>📦 توريد #${p.id}</h2><small>${esc(supById(p.supplier)?.name||'')} · ${p.date}</small>
+ ${p.lines.map(l=>`<div class="cart-i"><span>${esc(l.name)} × ${l.qty}</span><span>${money(l.qty*l.cost)}</span></div>`).join('')}
+ <div class="total">${money(p.total)}</div>
+ <div style="text-align:center">مدفوع ${money(p.paid||0)} · متبقي ${money(p.total-(p.paid||0))}</div>
+ ${p.note?`<p>📝 ${esc(p.note)}</p>`:''}
+ <div class="row" style="margin-top:10px"><button class="btn o" onclick="supView(${p.supplier})">رجوع</button><button class="btn d" onclick="purDel(${p.id})">حذف التوريد</button></div>`);
+}
+async function purDel(id){
+ const p=DB.purchases.find(x=>x.id===id);if(!p)return;
+ if(!await askOwner('حذف توريد',['حذف توريد #'+id+' بقيمة '+p.total]))return;
+ p.lines.forEach(l=>{const it=DB.items.find(i=>i.id===l.id);if(it)moveStock(it,-Math.min(it.qty,l.qty),'إلغاء توريد #'+id,0)});
+ DB.purchases=DB.purchases.filter(x=>x.id!==id);audit('purdel',{id,total:p.total});supView(p.supplier);
+}
+function printSup(id){
+ const s=supById(id),rows=[];
+ if(+s.opening)rows.push({d:'',t:'رصيد سابق',a:+s.opening,k:0});
+ DB.purchases.filter(p=>p.supplier===id).forEach(p=>{rows.push({d:p.date,t:'توريد: '+lineTxt(p),a:p.total,k:0});if(p.paid)rows.push({d:p.date,t:'مدفوع عند التوريد',a:0,k:p.paid})});
+ DB.supPay.filter(p=>p.supplier===id).forEach(p=>rows.push({d:p.date,t:'سداد'+(p.note?' — '+p.note:''),a:0,k:p.amount}));
+ rows.sort((x,y)=>x.d.localeCompare(y.d));
+ let bal=0;
+ const body=rows.map(r=>{bal+=r.a-r.k;return`<tr><td>${r.d}</td><td>${esc(r.t)}</td><td>${r.a?money(r.a):''}</td><td>${r.k?money(r.k):''}</td><td>${money(bal)}</td></tr>`}).join('');
+ $('#receipt').innerHTML=`<div style="text-align:center"><img src="${LOGO}" style="width:80px"><h2>${esc(DB.settings.shop)}</h2><h3>كشف حساب مورد: ${esc(s.name)}</h3><div>${dkey()}</div></div>
+ <table style="width:100%;border-collapse:collapse" border="1" cellpadding="4"><tr><th>التاريخ</th><th>البيان</th><th>علينا</th><th>دفعنا</th><th>الرصيد</th></tr>${body}</table><h3>الرصيد المستحق: ${money(supBal(id))}</h3>`;
+ window.print();
+}
+function homeSupp(){
+ const due=DB.suppliers.map(s=>({s,b:supBal(s.id)})).filter(x=>x.b>0).sort((a,b)=>b.b-a.b);
+ $('#app').insertAdjacentHTML('beforeend',`<div class="card"><h2>🏭 مستحقات الموردين (${due.length})</h2>${due.length?due.slice(0,6).map(x=>{const lp=lastPur(x.s.id);return`<div class="cart-i" onclick="supView(${x.s.id})" style="cursor:pointer"><span>${esc(x.s.name)}${lp?`<br><small style="color:var(--mut)">آخر توريد ${lp.date}</small>`:''}</span><span class="tag low">${money(x.b)}</span></div>`}).join(''):'<div class="empty">مفيش مستحقات 👍</div>'}</div>`);
+}
+
+// ============ شغلانة مفتاح (قطعة + مصنعية) ============
+function jobWizard(){
+ const svc=DB.items.filter(i=>i.service);
+ if(!svc.length){alert('ضيف الخدمات الجاهزة من تبويب المخزون الأول');return}
+ const groups={};svc.forEach(i=>{const g=i.grp||'أخرى';(groups[g]=groups[g]||[]).push(i)});
+ const parts=DB.items.filter(i=>!i.service&&i.qty>0);
+ openModal(`<h2>🔑 شغلانة مفتاح سيارة</h2>
+ <label>العميل</label><select id="jw_c" onchange="jwCust()"><option value="0">عميل نقدي</option>${DB.customers.map(c=>`<option value="${c.id}">${esc(c.name)}</option>`).join('')}</select>
+ <div id="jw_cw"></div>
+ <label>نوع الشغلانة (المصنعية)</label><select id="jw_s" onchange="jwSvc()">${Object.entries(groups).map(([g,a])=>`<optgroup label="${esc(g)}">${a.map(i=>`<option value="${i.id}">${esc(i.name)}</option>`).join('')}</optgroup>`).join('')}</select>
+ <div id="jw_w" style="font-size:13px;color:var(--bad);margin-bottom:8px"></div>
+ <div class="row"><div><label>سعر المصنعية</label><input id="jw_lp" type="number" min="0"></div><div><label>تكلفة علينا (كود / فني)</label><input id="jw_lc" type="number" min="0" value="0"></div></div>
+ <label>القطعة (مفتاح / ريموت / كارت) — اختياري</label><select id="jw_p" onchange="jwPart()"><option value="0">— بدون قطعة —</option>${(g=>Object.entries(g).map(([b,a])=>`<optgroup label="${esc(b)}">${a.map(i=>`<option value="${i.id}">${esc(i.name)} (متاح ${i.qty})</option>`).join('')}</optgroup>`).join(''))(parts.reduce((g,i)=>{const k=i.brand?i.brand+(i.model?' — '+i.model:''):'بدون ماركة';(g[k]=g[k]||[]).push(i);return g},{}))}</select>
+ <div id="jw_pw" style="display:none"><label>سعر القطعة</label><input id="jw_pp" type="number" min="0"></div>
+ <div class="row" style="margin-top:8px"><button class="btn k" onclick="jwAdd()">أضف للفاتورة</button><button class="btn o" onclick="closeModal()">إلغاء</button></div>`);
+ jwSvc();
+}
+function jwCust(){
+ const c=+$('#jw_c').value,cs=c?custCars(c):[];
+ $('#jw_cw').innerHTML=cs.length?`<label>العربية</label><select id="jw_car" onchange="jwWarn()"><option value="0">— بدون —</option>${cs.map(x=>`<option value="${x.id}">${esc(carLabel(x.id))}</option>`).join('')}</select>`:'';
+ jwWarn();
+}
+function jwSvc(){
+ const it=DB.items.find(i=>i.id===+$('#jw_s').value);if(!it)return;
+ $('#jw_lp').value=it.price;$('#jw_lc').value=it.cost||0;jwWarn();
+}
+function jwWarn(){
+ const it=DB.items.find(i=>i.id===+$('#jw_s').value),w=$('#jw_w');if(!w||!it)return;
+ const cs=$('#jw_car'),car=cs?DB.cars.find(x=>x.id===+cs.value):null;
+ w.textContent=/من عدم/.test(it.name)&&!(car&&car.own)?'⚠️ شغلانة "من عدم": اتأكد من ملكية العربية (رخصة + بطاقة) وعلّم عليها في ملف العربية قبل التنفيذ.':'';
+}
+function jwPart(){
+ const it=DB.items.find(i=>i.id===+$('#jw_p').value);
+ $('#jw_pw').style.display=it?'':'none';if(it)$('#jw_pp').value=it.price;
+}
+function jwAdd(){
+ const sv=DB.items.find(i=>i.id===+$('#jw_s').value),pt=DB.items.find(i=>i.id===+$('#jw_p').value);
+ if(!sv)return;
+ if(pt){
+  const have=cart.filter(l=>l.id===pt.id).reduce((a,l)=>a+l.qty,0);
+  if(have+1>pt.qty){alert('الكمية المتاحة '+pt.qty+' بس');return}
+  cart.push({id:pt.id,name:pt.name,price:+$('#jw_pp').value||0,cost:pt.cost||0,qty:1,service:false,kind:'part'});
+ }
+ cart.push({id:sv.id,name:sv.name,price:+$('#jw_lp').value||0,cost:+$('#jw_lc').value||0,qty:1,service:true,kind:sv.grp==='رسوم'?'fee':'labor'});
+ const c=+$('#jw_c').value,cs=$('#jw_car');
+ if(c)PRE={cust:c,car:cs?+cs.value:0};
+ closeModal();rCart();
+}
+function addMissingServices(){
+ let n=0;
+ SERVICES.forEach(([nm,p,c,g])=>{
+  const ex=DB.items.find(i=>i.name===nm);
+  if(!ex){DB.items.push({id:uid(),name:nm,cat:'خدمة',service:true,qty:0,cost:c||0,price:p,grp:g});n++}
+  else if(ex.service&&!ex.grp)ex.grp=g;
+ });
+ return n;
+}
+function addDefaultServices(){
+ const n=addMissingServices();save();rStock();
+ alert(n?'تمت إضافة '+n+' خدمة. الأسعار تقديرية — عدّلها بأسعارك.':'كل الخدمات موجودة');
+}
+
+function download(name,data,type){try{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([data],{type}));a.download=name;a.style.display='none';document.body.appendChild(a);a.click();setTimeout(()=>{a.remove();URL.revokeObjectURL(a.href)},4000)}catch(e){alert('تعذر التنزيل: '+e.message)}}
+
+// ============ الإعدادات ============
+function rSettings0(){
+ const s=DB.settings;
+ $('#app').innerHTML=`<div class="card"><h2>⚙️ الإعدادات</h2>
+ <label>اسم المحل</label><input id="s1" value="${esc(s.shop)}"><label>التليفون (يظهر في الفاتورة)</label><input id="s2" value="${esc(s.phone)}">
+ <div class="row"><div><label>العملة</label><input id="s3" value="${esc(s.cur)}"></div><div><label>تنبيه المخزون عند أقل من</label><input id="s4" type="number" value="${s.low}"></div></div>
+ <button class="btn k" onclick="saveSet()">حفظ</button></div>
+ <div class="card"><h2>💾 النسخ الاحتياطي</h2><p style="font-size:13px;color:var(--mut)">البيانات وملفات العربيات محفوظة على الجهاز نفسه. خد نسخة احتياطية بشكل دوري، وتقدر تنقل البيانات من موبايل لكمبيوتر بالنسخة دي.</p>
+ <div class="row"><button class="btn" onclick="backup()">⬇️ تنزيل نسخة</button><label class="btn o">⬆️ استرجاع<input type="file" style="display:none" onchange="restore(this.files[0]);this.value=''"></label></div>
+ </div>
+ <div class="card"><h2>🩺 فحص الجهاز</h2><p style="font-size:13px;color:var(--mut)">لو التنزيل أو رفع الملفات مش شغال، اضغط هنا وشوف إيه الممنوع.</p><button class="btn o" onclick="diag()">فحص</button></div>
+ <div class="card"><h2>🗑️ مسح كل البيانات</h2><button class="btn d" onclick="wipe()">مسح الكل</button></div>`;
+}
+function saveSet(){DB.settings={shop:$('#s1').value||'الحاجة أم رضا للمفاتيح',phone:$('#s2').value,cur:$('#s3').value||'ج.م',low:+$('#s4').value||0};save();render();alert('تم الحفظ ✅')}
+async function backup(){const files=[];for(const r of await fAll())files.push({id:r.id,name:r.name,type:r.type,data:await b2d(r.blob)});shareModal('keyshop-backup-'+dkey()+'.json',JSON.stringify({...DB,_files:files}),'النسخة الاحتياطية جاهزة','application/json')}
+function restore(f){if(!f)return;const r=new FileReader();r.onload=async()=>{try{const d=JSON.parse(r.result);if(!d.items||!d.sales)throw 0;if(await askOwner('استرجاع نسخة احتياطية',['هيتم استبدال كل البيانات الحالية'])){await fClear();for(const x of d._files||[])await fPut({id:x.id,name:x.name,type:x.type,blob:d2b(x.data)});delete d._files;const keep={users:DB.users,approval:DB.approval,log:DB.log,seal:DB.seal,lockInfo:DB.lockInfo};DB=Object.assign(structuredClone(def),d,keep);DB.moves=Array.isArray(d.moves)?d.moves:[];audit('restore','استرجاع نسخة احتياطية');rebase();registerAll();audit('rebase','مطابقة بعد الاسترجاع');go('home')}}catch(e){alert('الملف غير صالح')}};r.readAsText(f)}
+async function wipe(){if(await askOwner('مسح كل البيانات',['هيتمسح كل حاجة (عدا الموظفين وسجل العمليات)'])&&confirm('تأكيد أخير!')){await fClear();const keep={users:DB.users,approval:DB.approval,log:DB.log,seal:DB.seal,lockInfo:DB.lockInfo};DB=Object.assign(structuredClone(def),keep);audit('wipe','مسح كل البيانات');go('home')}}
+
+// ============ الأمان والرقابة ============
+const SHA_K=(()=>{const k=[];let n=2;while(k.length<64){let p=1;for(let i=2;i*i<=n;i++)if(n%i===0){p=0;break}if(p)k.push(Math.floor((Math.cbrt(n)%1)*4294967296)>>>0);n++}return k})();
+const SHA_H=(()=>{const k=[];let n=2;while(k.length<8){let p=1;for(let i=2;i*i<=n;i++)if(n%i===0){p=0;break}if(p)k.push(Math.floor((Math.sqrt(n)%1)*4294967296)>>>0);n++}return k})();
+function sha256(str){
+ const m=new TextEncoder().encode(str),l=m.length,tot=((l+9+63)>>6)<<6,b=new Uint8Array(tot);b.set(m);b[l]=0x80;
+ const dv=new DataView(b.buffer);dv.setUint32(tot-8,Math.floor(l*8/4294967296));dv.setUint32(tot-4,(l*8)>>>0);
+ let h=SHA_H.slice();const w=new Uint32Array(64);
+ const rr=(x,n)=>(x>>>n)|(x<<(32-n));
+ for(let o=0;o<tot;o+=64){
+  for(let i=0;i<16;i++)w[i]=dv.getUint32(o+i*4);
+  for(let i=16;i<64;i++){const s0=rr(w[i-15],7)^rr(w[i-15],18)^(w[i-15]>>>3),s1=rr(w[i-2],17)^rr(w[i-2],19)^(w[i-2]>>>10);w[i]=(w[i-16]+s0+w[i-7]+s1)>>>0}
+  let [a,b2,c,d,e,f,g,hh]=h;
+  for(let i=0;i<64;i++){
+   const S1=rr(e,6)^rr(e,11)^rr(e,25),ch=(e&f)^(~e&g),t1=(hh+S1+ch+SHA_K[i]+w[i])>>>0,S0=rr(a,2)^rr(a,13)^rr(a,22),mj=(a&b2)^(a&c)^(b2&c),t2=(S0+mj)>>>0;
+   hh=g;g=f;f=e;e=(d+t1)>>>0;d=c;c=b2;b2=a;a=(t1+t2)>>>0;
+  }
+  h=[(h[0]+a)>>>0,(h[1]+b2)>>>0,(h[2]+c)>>>0,(h[3]+d)>>>0,(h[4]+e)>>>0,(h[5]+f)>>>0,(h[6]+g)>>>0,(h[7]+hh)>>>0];
+ }
+ return h.map(x=>x.toString(16).padStart(8,'0')).join('');
+}
+function hashPin(pin,salt){let h=sha256(salt+':'+pin);for(let i=0;i<1999;i++)h=sha256(h+salt);return h}
+function rndSalt(){try{const a=new Uint8Array(12);crypto.getRandomValues(a);return [...a].map(x=>x.toString(16).padStart(2,'0')).join('')}catch(e){return String(Math.random()).slice(2)+Date.now()}}
+
+let ME=null,MEKEY=null,SEALHOLD=false,lastAct=Date.now();
+const PERMS=[['sell','يبيع ويعمل فواتير'],['credit','يبيع آجل (دين) من غير موافقة'],['payDebt','يسجل سداد دين عميل'],['addCust','يضيف عملاء'],['expenses','يسجل مصروفات'],['stocktake','يعمل جرد'],['closing','يقفل الخزنة'],['editPrice','يغير سعر الصنف من غير موافقة'],['manualLines','يضيف بنود يدوي من غير موافقة'],['stockEdit','يعدل كميات وأسعار الأصناف'],['voidSale','يلغي فواتير'],['loss','يسجل هالك وخسائر'],['payroll','يصرف مرتبات (وبيشوفها)'],['viewCost','يشوف التكلفة'],['reports','يشوف التقارير والأرباح'],['suppliers','يشوف الموردين']];
+const DEFPERMS={sell:1,credit:0,payDebt:1,addCust:1,expenses:1,loss:1,payroll:0,stocktake:1,closing:1,editPrice:0,manualLines:0,stockEdit:0,voidSale:0,viewCost:0,reports:0,suppliers:0,discountPct:5};
+const isOwner=()=>!!ME&&ME.role==='owner';
+const owner=()=>DB.users.find(u=>u.role==='owner'&&u.active!==false);
+const can=p=>isOwner()||!!(ME&&ME.perms&&ME.perms[p]);
+async function need(p,why){return can(p)||!!(await askOwner('محتاج موافقة المالك',[why]))}
+const nowISO=()=>new Date().toISOString();
+
+// ---- سجل العمليات (سلسلة هاش) ----
+function audit(a,d,who){
+ const u=who||ME,L=DB.log,prev=L.length?L[L.length-1].h:'GENESIS',n=L.length+1,t=nowISO(),mh=DB.moves.length?DB.moves[DB.moves.length-1].h:'';
+ const e={n,t,u:u?u.id:0,un:u?u.name:'النظام',a,d:d===undefined?'':d,mh,prev};
+ e.h=sha256([prev,n,t,e.u,a,JSON.stringify(e.d),mh].join('|'));
+ L.push(e);
+ if(isOwner()&&MEKEY&&!SEALHOLD)sealNow();
+ save();return e;
+}
+const usersHash=()=>sha256(JSON.stringify(DB.users.map(u=>[u.id,u.name,u.role,u.hash,u.active!==false,u.perms||null]))+(DB.approval?DB.approval.hash:''));
+function sealKey(pin){return hashPin(pin,'seal-v1')}
+function sealNow(){
+ if(!MEKEY||!DB.log.length)return;
+ const e=DB.log[DB.log.length-1],uh=usersHash();
+ DB.seal={n:e.n,h:e.h,uh,mac:sha256(['seal',MEKEY,e.n,e.h,uh].join('|'))};
+}
+const saleHash=s=>sha256(JSON.stringify([s.id,s.date,s.cust,s.discount,s.lines.map(l=>[l.id,l.name,l.price,l.qty])]));
+
+// ---- حركة المخزون ----
+function moveStock(it,delta,why,ref){
+ it.qty=(+it.qty||0)+delta;
+ const prev=DB.moves.length?DB.moves[DB.moves.length-1].h:'M0',id=uid(),t=nowISO();
+ const m={id,t,item:it.id,name:it.name,d:delta,after:it.qty,why,ref:ref||0,u:ME?ME.id:0,un:ME?ME.name:'النظام',prev};
+ m.h=sha256([prev,id,t,it.id,delta,it.qty,why,m.u].join('|'));
+ DB.moves.push(m);return m;
+}
+function rebase(){ // يخلّي سجل الحركة متطابق مع الكميات الحالية
+ DB.items.filter(i=>!i.service).forEach(i=>{
+  const ms=DB.moves.filter(m=>m.item===i.id),last=ms.length?ms[ms.length-1].after:0;
+  if(last!==i.qty)moveStock(i,0,'رصيد افتتاحي / مطابقة',0),DB.moves[DB.moves.length-1].d=i.qty-last,
+   (m=>{m.h=sha256([m.prev,m.id,m.t,m.item,m.d,m.after,m.why,m.u].join('|'))})(DB.moves[DB.moves.length-1]);
+ });
+}
+function registerAll(){
+ const hs=new Set(DB.log.filter(e=>e.a==='sale').map(e=>e.d&&e.d.id)),he=new Set(DB.log.filter(e=>e.a==='exp').map(e=>e.d&&e.d.id));
+ DB.sales.forEach(s=>{if(!hs.has(s.id))audit('sale',{id:s.id,total:saleTotal(s),paid:s.paid,h:saleHash(s),imp:1})});
+ DB.expenses.forEach(x=>{if(!he.has(x.id))audit('exp',{id:x.id,amount:x.amount,name:x.name,imp:1})});
+ const hp=new Set(DB.log.filter(e=>e.a==='payroll').map(e=>e.d&&e.d.id));DB.payroll.forEach(x=>{if(!hp.has(x.id))audit('payroll',{id:x.id,kind:x.kind,amount:x.amount,who:x.wn,imp:1})});
+ const hl=new Set(DB.log.filter(e=>e.a==='loss').map(e=>e.d&&e.d.id));DB.losses.forEach(x=>{if(!hl.has(x.id))audit('loss',{id:x.id,amount:x.amount,name:x.name,qty:x.qty,imp:1})});
+}
+
+// ---- فحص السلامة ----
+function verifyAll(key){
+ const I=[],L=DB.log;let prev='GENESIS',lt=0;
+ L.forEach((e,i)=>{
+  const h=sha256([prev,e.n,e.t,e.u,e.a,JSON.stringify(e.d),e.mh||''].join('|'));
+  if(e.n!==i+1||e.prev!==prev||e.h!==h){if(!I.some(x=>x.startsWith('⛔ السجل')))I.push('⛔ السجل اتعدّل أو اتمسح منه حاجة عند الحركة رقم '+(i+1));}
+  const tm=Date.parse(e.t)||0;if(tm<lt-300000&&!I.some(x=>x.includes('الساعة')))I.push('🕒 ساعة الجهاز اتغيّرت (حركة بتاريخ أقدم من اللي قبلها) عند الحركة '+e.n);
+  lt=Math.max(lt,tm);prev=e.h;
+ });
+ // ختم المالك
+ if(DB.seal&&key){
+  const s=DB.seal,mac=sha256(['seal',key,s.n,s.h,s.uh].join('|'));
+  if(mac!==s.mac)I.push('⛔ ختم المالك اتغيّر — حد لعب في البيانات من برّه البرنامج');
+  else{
+   if(!L[s.n-1]||L[s.n-1].h!==s.h)I.push('⛔ السجل اتقصّ أو اتبدّل بعد آخر مرة دخلت فيها');
+   if(usersHash()!==s.uh)I.push('⛔ المستخدمين أو الصلاحيات اتغيّروا من برّه البرنامج');
+  }
+ }else if(key&&!DB.seal&&L.length)I.push('⚠️ مفيش ختم سابق (أول فحص)');
+ // الفواتير والمصروفات مقابل السجل
+ let b=0;L.forEach((e,i)=>{if(e.a==='restore'||e.a==='wipe')b=i+1});
+ const sl=new Map(),voided=new Set(),el=new Map(),eld=new Set();
+ L.forEach((e,i)=>{if(!e.d)return;if(e.a==='sale')sl.set(e.d.id,{e,i});if(e.a==='void')voided.add(e.d.id);if(e.a==='exp')el.set(e.d.id,{e,i});if(e.a==='expdel')eld.add(e.d.id)});
+ DB.sales.forEach(s=>{const r=sl.get(s.id);if(!r)I.push('🧾 فاتورة #'+s.id+' موجودة من غير سجل (اتضافت من برّه)');else if(r.e.d.h!==saleHash(s))I.push('🧾 فاتورة #'+s.id+' اتعدّلت بعد ما اتسجلت')});
+ sl.forEach((r,id)=>{if(r.i>=b&&!voided.has(id)&&!DB.sales.some(s=>s.id===id))I.push('🧾 فاتورة #'+id+' اتشالت من غير إلغاء مسجل')});
+ DB.expenses.forEach(x=>{const r=el.get(x.id);if(!r)I.push('💸 مصروف "'+x.name+'" من غير سجل');else if(+r.e.d.amount!==+x.amount)I.push('💸 مصروف "'+x.name+'" اتغيّر مبلغه')});
+ el.forEach((r,id)=>{if(r.i>=b&&!eld.has(id)&&!DB.expenses.some(x=>x.id===id))I.push('💸 مصروف رقم '+id+' اتشال من غير سجل')});
+ const ll=new Map(),lld=new Set();L.forEach((e,i)=>{if(!e.d)return;if(e.a==='loss')ll.set(e.d.id,{e,i});if(e.a==='lossdel')lld.add(e.d.id)});
+ DB.losses.forEach(x=>{const r=ll.get(x.id);if(!r)I.push('🗑️ هالك "'+x.name+'" من غير سجل');else if(+r.e.d.amount!==+x.amount)I.push('🗑️ هالك "'+x.name+'" اتغيّر مبلغه')});
+ ll.forEach((r,id)=>{if(r.i>=b&&!lld.has(id)&&!DB.losses.some(x=>x.id===id))I.push('🗑️ هالك رقم '+id+' اتشال من غير سجل')});
+ const pr=new Map(),prd=new Set();L.forEach((e,i)=>{if(!e.d)return;if(e.a==='payroll')pr.set(e.d.id,{e,i});if(e.a==='payrolldel')prd.add(e.d.id)});
+ DB.payroll.forEach(x=>{const r=pr.get(x.id);if(!r)I.push('👷 حركة مرتب '+x.wn+' من غير سجل');else if(+r.e.d.amount!==+x.amount)I.push('👷 مبلغ حركة مرتب '+x.wn+' اتغيّر')});
+ pr.forEach((r,id)=>{if(r.i>=b&&!prd.has(id)&&!DB.payroll.some(x=>x.id===id))I.push('👷 حركة مرتب رقم '+id+' اتشالت من غير سجل')});
+ // المخزون
+ let mp='M0';DB.moves.forEach(m=>{const h=sha256([m.prev,m.id,m.t,m.item,m.d,m.after,m.why,m.u].join('|'));if(m.prev!==mp||m.h!==h){if(!I.some(x=>x.includes('سجل المخزون')))I.push('⛔ سجل المخزون اتعدّل');}mp=m.h});
+ if(L.length&&(L[L.length-1].mh||'')!==(DB.moves.length?DB.moves[DB.moves.length-1].h:''))I.push('⛔ سجل المخزون اتغيّر بعد آخر حركة مسجلة');
+ DB.items.filter(i=>!i.service).forEach(i=>{
+  const ms=DB.moves.filter(m=>m.item===i.id),last=ms.length?ms[ms.length-1].after:0;
+  if(last!==i.qty)I.push('📦 رصيد "'+i.name+'" اتغيّر من برّه: السجل '+last+' والموجود '+i.qty);
+  if(i.qty<0)I.push('📦 رصيد "'+i.name+'" بالسالب');
+ });
+ return I;
+}
+
+// ---- الدخول والقفل ----
+function lockedMsg(key){const i=DB.lockInfo&&DB.lockInfo[key];return i&&i.until>Date.now()?Math.ceil((i.until-Date.now())/60000):0}
+function failCount(key){DB.lockInfo=DB.lockInfo||{};const i=DB.lockInfo[key]||(DB.lockInfo[key]={n:0,until:0});i.n++;if(i.n>=5){i.until=Date.now()+Math.min(60,5*Math.pow(2,Math.floor(i.n/5)-1))*60000}save();return i}
+function okCount(key){if(DB.lockInfo&&DB.lockInfo[key]){delete DB.lockInfo[key];save()}}
+function showLock(html){const L=$('#lock');L.innerHTML='<div class="apbox"><img class="logo" alt="" style="width:120px;display:block;margin:0 auto 6px"><h1 style="text-align:center;font-size:21px;color:var(--main2);margin:0 0 12px">'+esc(DB.settings.shop)+'</h1><div style="text-align:center;margin:-8px 0 12px;font-weight:700;color:#444"><span style="direction:ltr;display:inline-block;letter-spacing:1px">United Engineers</span></div>'+html+'</div>';L.style.display='block';initLogo()}
+const SESS='keyshop_sess',IDLE=1800000;
+function sessSave(){try{if(ME&&DB.remember!==false)localStorage.setItem(SESS,JSON.stringify({u:ME.id,k:MEKEY||null,t:lastAct}));else localStorage.removeItem(SESS)}catch(e){}}
+function sessClear(){try{localStorage.removeItem(SESS)}catch(e){}}
+function sessResume(){
+ try{
+  const t=JSON.parse(localStorage.getItem(SESS)||'null');
+  if(!t||DB.remember===false||Date.now()-t.t>IDLE)return false;
+  const u=DB.users.find(x=>x.id===t.u&&x.active!==false);if(!u||(u.role==='owner'&&!t.k))return false;
+  const I=u.role==='owner'?verifyAll(t.k):[];SEALHOLD=I.length>0;ME=u;MEKEY=u.role==='owner'?t.k:null;lastAct=Date.now();
+  enter();if(I.length)showAlerts(I);else if(u.role==='owner'){sealNow();save()}
+  return true;
+ }catch(e){return false}
+}
+function toggleRemember(){DB.remember=DB.remember===false;audit('setting','تذكر الدخول '+(DB.remember?'شغال':'متوقف'));if(!DB.remember)sessClear();else sessSave();rSettings()}
+document.addEventListener('visibilitychange',()=>{if(document.hidden)sessSave();else if(ME&&Date.now()-lastAct>IDLE)lockNow()});
+window.addEventListener('pagehide',sessSave);
+setInterval(()=>{if(ME)sessSave()},15000);
+function boot(){
+ if(sessResume())return;
+ if(!DB.users.length){
+  showLock(`<h2>🔐 أول مرة: حساب المالك</h2><p style="font-size:13px;color:var(--mut)">إنت صاحب المحل. اختار كلمة سر قوية (6 أرقام أو حروف على الأقل). هتاخد بعد الدخول <b>مفتاح استرجاع</b> تكتبه على ورقة لو نسيتها.</p>
+  <label>اسمك</label><input id="su_n" value="المالك"><label>كلمة السر</label><input id="su_p" type="password" autocomplete="new-password"><label>تأكيد كلمة السر</label><input id="su_p2" type="password" autocomplete="new-password"><label>كود الموافقة <small>(غير كلمة سرك — بتكتبه للموظف لما محتاج موافقتك)</small></label><input id="su_c" type="password" autocomplete="new-password">
+  <button class="btn k" style="width:100%;margin-top:8px" onclick="doSetup()">إنشاء وبدء</button><div id="lm" style="color:var(--bad);margin-top:6px"></div>`);
+ }else showLogin();
+}
+function doSetup(){
+ const n=$('#su_n').value.trim(),p=$('#su_p').value;
+ if(!n){$('#lm').textContent='اكتب الاسم';return}
+ if(p.length<6){$('#lm').textContent='كلمة السر لازم 6 على الأقل';return}
+ if(p!==$('#su_p2').value){$('#lm').textContent='التأكيد مش مطابق';return}
+ const c=$('#su_c').value;if(c.length<5){$('#lm').textContent='كود الموافقة 5 على الأقل';return}if(c===p){$('#lm').textContent='كود الموافقة لازم يختلف عن كلمة السر';return}
+ const salt=rndSalt(),u={id:uid(),name:n,role:'owner',salt,hash:hashPin(p,salt),active:true,perms:null};
+ DB.users.push(u);DB.approval={salt:rndSalt(),hash:''};DB.approval.hash=hashPin(c,DB.approval.salt);ME=u;MEKEY=sealKey(p);
+ rebase();registerAll();audit('setup','إنشاء حساب المالك: '+n);sealNow();save();enter();sessSave();
+}
+function showLogin(){
+ const us=DB.users.filter(u=>u.active!==false);
+ showLock(`<h2>🔐 تسجيل الدخول</h2><label>المستخدم</label><select id="lu">${us.map(u=>`<option value="${u.id}">${esc(u.name)}${u.role==='owner'?' (المالك)':''}</option>`).join('')}</select>
+ <label>كلمة السر</label><input id="lp" type="password" autocomplete="off" onkeydown="if(event.key==='Enter')doLogin()"><button class="btn k" style="width:100%;margin-top:8px" onclick="doLogin()">دخول</button><button class="btn o" style="width:100%;margin-top:6px" onclick="forgotUI()">🆘 نسيت كلمة السر</button><div id="lm" style="color:var(--bad);margin-top:6px"></div>`);
+}
+function doLogin(){
+ const u=DB.users.find(x=>x.id===+$('#lu').value),p=$('#lp').value;if(!u)return;
+ const lk=lockedMsg('u'+u.id);if(lk){$('#lm').textContent='الحساب مقفول مؤقتاً، حاول بعد '+lk+' دقيقة';return}
+ if(hashPin(p,u.salt)!==u.hash){const i=failCount('u'+u.id);audit('badpin','محاولة دخول فاشلة على '+u.name,{id:0,name:'؟'});$('#lm').textContent=i.until>Date.now()?'اتقفل الحساب مؤقتاً بسبب محاولات غلط':'كلمة السر غلط';$('#lp').value='';return}
+ okCount('u'+u.id);const key=u.role==='owner'?sealKey(p):null,I=key?verifyAll(key):[];SEALHOLD=I.length>0;ME=u;MEKEY=key;audit('login','دخول');
+ if(u.role==='owner'){
+  if(I.length){enter();sessSave();showAlerts(I);return}
+  sealNow();save();
+ }
+ enter();sessSave();
+}
+function setApprovalForm(first){
+ if($('#modal').classList.contains('show'))return;
+ openModal(`<h2>🔑 كود الموافقة</h2><p style="font-size:13px;color:var(--mut)">ده الكود اللي بتكتبه للموظف لما العملية تحتاج موافقتك (خصم كبير، إلغاء فاتورة، بيع بأقل من التكلفة...). <b>لازم يكون غير كلمة سرك</b> علشان محدش يعرف كلمة سر المالك. الكود ده بيوافق بس وما بيفتحش البرنامج.</p>
+ <label>كود الموافقة (5 على الأقل)</label><input id="ac_a" type="password" autocomplete="new-password"><label>تأكيد الكود</label><input id="ac_b" type="password" autocomplete="new-password">
+ <div class="row"><button class="btn k" onclick="saveApproval()">حفظ</button>${first?'':'<button class="btn o" onclick="closeModal()">إلغاء</button>'}</div>`);
+}
+function saveApproval(){
+ const c=$('#ac_a').value;
+ if(c.length<5){alert('الكود 5 على الأقل');return}
+ if(c!==$('#ac_b').value){alert('التأكيد مش مطابق');return}
+ if(DB.users.some(u=>hashPin(c,u.salt)===u.hash)){alert('الكود ده نفس كلمة سر دخول لحد. اختار كود مختلف');return}
+ DB.approval={salt:rndSalt(),hash:''};DB.approval.hash=hashPin(c,DB.approval.salt);
+ audit('approvalcode','تغيير كود الموافقة');sealNow();save();closeModal();alert('تم حفظ كود الموافقة ✅');
+}
+
+// ---- نسيت كلمة السر / مفتاح الاسترجاع ----
+const xorHex=(a,b)=>{let r='';for(let i=0;i<a.length;i++)r+=(parseInt(a[i],16)^parseInt(b[i%b.length],16)).toString(16);return r};
+const rkNorm=t=>String(t||'').toUpperCase().replace(/[^A-Z0-9]/g,'');
+function genRK(){const A='ABCDEFGHJKLMNPQRSTUVWXYZ23456789',b=new Uint8Array(16);crypto.getRandomValues(b);let k='';b.forEach((x,i)=>{k+=A[x%A.length];if(i%4===3&&i<15)k+='-'});return k}
+function newRecovery(){
+ if(!isOwner()||!MEKEY){alert('الخطوة دي للمالك بس');return}
+ const rk=genRK(),n=rkNorm(rk),salt=rndSalt();
+ DB.recov={salt,hash:hashPin(n,salt),wrap:xorHex(MEKEY,hashPin(n,'wrap-v1'))};
+ audit('recovery','مفتاح استرجاع جديد');sealNow();save();
+ closeModal();
+ openModal(`<h2>🆘 مفتاح الاسترجاع</h2><p style="font-size:13px">لو المالك نسي كلمة السر، المفتاح ده هو الطريقة الوحيدة لتغييرها. <b>اكتبه على ورقة واحتفظ بيها في مكان آمن بعيد عن الموظفين.</b> مش هيظهر تاني، ولو عملت مفتاح جديد القديم بيبطل.</p>
+ <div style="font-family:monospace;font-size:22px;letter-spacing:2px;text-align:center;direction:ltr;background:#fff8e1;border:2px dashed #d97706;border-radius:10px;padding:14px;margin:10px 0;user-select:all">${rk}</div>
+ <label style="display:flex;gap:8px;align-items:center"><input type="checkbox" id="rk_ok"> كتبت المفتاح وحفظته</label>
+ <button class="btn k" style="width:100%;margin-top:8px" onclick="if(!$('#rk_ok').checked){alert('اكتب المفتاح الأول وعلّم على الخانة');return}closeModal()">تم</button>`);
+}
+function forgotUI(){
+ showLock(`<h2>🆘 نسيت كلمة السر</h2><button class="btn k" style="width:100%;margin-top:8px" onclick="forgotStaff()">👤 أنا موظف ونسيت كلمة السر</button><p style="font-size:12px;color:var(--mut);margin:4px 0 10px">المالك لازم يكون موجود ويكتب كلمة سره.</p>
+ <button class="btn" style="width:100%" onclick="forgotOwner()">🔑 أنا المالك ونسيت كلمة السر</button><p style="font-size:12px;color:var(--mut);margin:4px 0 10px">محتاج مفتاح الاسترجاع اللي اتكتب لك.</p>
+ <button class="btn o" style="width:100%" onclick="showLogin()">رجوع</button>`);
+}
+function forgotStaff(){
+ const st=DB.users.filter(u=>u.role==='staff'&&u.active!==false);
+ if(!st.length){alert('مفيش موظفين');return}
+ showLock(`<h2>👤 رقم سري جديد لموظف</h2><label>الموظف</label><select id="fs_u">${st.map(u=>`<option value="${u.id}">${esc(u.name)}</option>`).join('')}</select>
+ <label>كلمة سر المالك (المالك بيكتبها بنفسه)</label><input id="fs_o" type="password" autocomplete="off"><label>كلمة السر الجديدة للموظف (4 على الأقل)</label><input id="fs_p" type="password" autocomplete="new-password">
+ <button class="btn k" style="width:100%;margin-top:8px" onclick="doForgotStaff()">حفظ</button><button class="btn o" style="width:100%;margin-top:6px" onclick="forgotUI()">رجوع</button><div id="lm" style="color:var(--bad);margin-top:6px"></div>`);
+}
+function doForgotStaff(){
+ const o=owner(),u=DB.users.find(x=>x.id===+$('#fs_u').value),op=$('#fs_o').value,p=$('#fs_p').value;if(!o||!u)return;
+ const lk=lockedMsg('u'+o.id);if(lk){$('#lm').textContent='مقفول مؤقتاً، حاول بعد '+lk+' دقيقة';return}
+ if(hashPin(op,o.salt)!==o.hash){const i=failCount('u'+o.id);audit('badpin','محاولة غلط لتغيير كلمة سر '+u.name,{id:0,name:'؟'});$('#lm').textContent=i.until>Date.now()?'اتقفل مؤقتاً بسبب محاولات غلط':'كلمة سر المالك غلط';return}
+ if(p.length<4){$('#lm').textContent='كلمة السر الجديدة 4 على الأقل';return}
+ if(DB.approval&&hashPin(p,DB.approval.salt)===DB.approval.hash){$('#lm').textContent='دي نفس كود الموافقة، اختار حاجة تانية';return}
+ okCount('u'+o.id);okCount('u'+u.id);
+ const key=sealKey(op),I=verifyAll(key);
+ u.salt=rndSalt();u.hash=hashPin(p,u.salt);
+ ME=o;MEKEY=key;SEALHOLD=I.length>0;audit('pinreset','المالك غيّر كلمة سر الموظف '+u.name+' (نسيها)');if(!SEALHOLD)sealNow();save();
+ ME=null;MEKEY=null;SEALHOLD=false;
+ showLock(`<h2>✅ تم</h2><p>كلمة سر ${esc(u.name)} اتغيّرت. يقدر يدخل بيها دلوقتي.</p><button class="btn k" style="width:100%" onclick="showLogin()">رجوع لتسجيل الدخول</button>`);
+}
+function forgotOwner(){
+ if(!DB.recov){showLock(`<h2>🔑 المالك</h2><p style="font-size:14px">مفيش مفتاح استرجاع متسجل على الجهاز ده، فمقدرش أغيّر كلمة السر من هنا.</p><button class="btn o" style="width:100%" onclick="forgotUI()">رجوع</button>`);return}
+ showLock(`<h2>🔑 كلمة سر جديدة للمالك</h2><label>مفتاح الاسترجاع</label><input id="fo_k" dir="ltr" placeholder="XXXX-XXXX-XXXX-XXXX" autocomplete="off" style="text-transform:uppercase">
+ <label>كلمة السر الجديدة (6 على الأقل)</label><input id="fo_p" type="password" autocomplete="new-password"><label>تأكيد كلمة السر</label><input id="fo_p2" type="password" autocomplete="new-password">
+ <button class="btn k" style="width:100%;margin-top:8px" onclick="doForgotOwner()">حفظ</button><button class="btn o" style="width:100%;margin-top:6px" onclick="forgotUI()">رجوع</button><div id="lm" style="color:var(--bad);margin-top:6px"></div>`);
+}
+function doForgotOwner(){
+ const o=owner(),n=rkNorm($('#fo_k').value),p=$('#fo_p').value;if(!o)return;
+ const lk=lockedMsg('recov');if(lk){$('#lm').textContent='مقفول مؤقتاً، حاول بعد '+lk+' دقيقة';return}
+ if(hashPin(n,DB.recov.salt)!==DB.recov.hash){const i=failCount('recov');audit('badpin','محاولة مفتاح استرجاع غلط',{id:0,name:'؟'});$('#lm').textContent=i.until>Date.now()?'اتقفل مؤقتاً بسبب محاولات غلط':'المفتاح غلط';return}
+ if(p.length<6){$('#lm').textContent='كلمة السر 6 على الأقل';return}
+ if(p!==$('#fo_p2').value){$('#lm').textContent='التأكيد مش مطابق';return}
+ if(DB.approval&&hashPin(p,DB.approval.salt)===DB.approval.hash){$('#lm').textContent='دي نفس كود الموافقة، اختار حاجة تانية';return}
+ okCount('recov');
+ const oldKey=xorHex(DB.recov.wrap,hashPin(n,'wrap-v1')),I=verifyAll(oldKey),nk=sealKey(p);
+ o.salt=rndSalt();o.hash=hashPin(p,o.salt);okCount('u'+o.id);
+ ME=o;MEKEY=nk;SEALHOLD=I.length>0;audit('pwreset','المالك غيّر كلمة سره بمفتاح الاسترجاع');if(!SEALHOLD)sealNow();save();
+ enter();sessSave();
+ if(I.length)showAlerts(I);else newRecovery();
+}
+function showAlerts(I){
+ openModal(`<h2 style="color:var(--bad)">🚨 تنبيه أمان</h2><p>الفحص لقى حاجات مش طبيعية:</p>${I.slice(0,40).map(x=>`<div class="cart-i" style="font-size:13px">${esc(x)}</div>`).join('')}${I.length>40?'<small>... و'+(I.length-40)+' كمان</small>':''}
+ <p style="font-size:12px;color:var(--mut)">راجع سجل العمليات وسجل المخزون. لو راجعت وعارف السبب اضغط اعتماد.</p>
+ <div class="row"><button class="btn d" onclick="ackAlerts()">اعتماد الوضع الحالي</button><button class="btn o" onclick="closeModal();go('log')">فتح السجل</button></div>`);
+}
+function ackAlerts(){SEALHOLD=false;audit('ack','المالك اعتمد الوضع الحالي بعد تنبيهات الأمان');sealNow();save();closeModal()}
+function enter(){$('#lock').style.display='none';$('#lock').innerHTML='';lastAct=Date.now();go('home');if(isOwner()&&!DB.approval)setTimeout(()=>setApprovalForm(true),0);else if(isOwner()&&MEKEY&&!DB.recov)setTimeout(()=>{if(!$('#modal').classList.contains('show'))newRecovery()},300)}
+function lockNow(){if(ME)audit('logout','خروج');sessClear();ME=null;MEKEY=null;SEALHOLD=false;$('#app').innerHTML='';$('#who').textContent='';closeModal();$('#ap').style.display='none';showLogin()}
+['click','keydown','touchstart'].forEach(ev=>document.addEventListener(ev,()=>{lastAct=Date.now()},true));
+setInterval(()=>{if(ME&&Date.now()-lastAct>IDLE)lockNow()},15000);
+
+function guardPage(p){
+ const need={rep:'reports',supp:'suppliers',close:'closing'};
+ if(['users','log'].includes(p)&&!isOwner()){alert('للمالك فقط');return false}
+ if(need[p]&&!can(need[p])){alert('مش مسموح لك بالصفحة دي');return false}
+ return true;
+}
+function applyView(){
+ document.body.classList.toggle('nocost',!can('viewCost'));
+ const w=$('#who');if(w)w.textContent=ME?ME.name:'';
+ document.querySelectorAll('nav button').forEach(b=>{const m={rep:'reports',supp:'suppliers'}[b.dataset.p];b.style.display=m&&!can(m)?'none':''});
+ if(page==='home'&&!can('reports')){
+  document.querySelectorAll('.stat').forEach(e=>{if(e.textContent.includes('صافي ربح'))e.remove()});
+  document.querySelectorAll('.card h2').forEach(h=>{if(h.textContent.includes('الشهر الحالي'))h.parentElement.remove()});
+ }
+}
+
+// ---- موافقة المالك ----
+function askOwner(title,reasons){
+ if(isOwner())return Promise.resolve(ME);
+ return new Promise(res=>{
+  const ap=$('#ap'),key='a'+(ME?ME.id:0);let tries=0;
+  ap.innerHTML=`<div class="apbox"><h2>🔐 ${esc(title)}</h2>${reasons.map(r=>`<div class="cart-i" style="font-size:13px">${esc(r)}</div>`).join('')}<label>كود الموافقة <small style="color:var(--mut)">(مش كلمة سر الدخول)</small></label><input id="apin" type="password" autocomplete="off"><div class="row"><button class="btn k" id="apok">موافقة</button><button class="btn o" id="apno">إلغاء</button></div><small id="apm" style="color:var(--bad)"></small></div>`;
+  ap.style.display='block';
+  const done=v=>{ap.style.display='none';ap.innerHTML='';res(v)};
+  $('#apno').onclick=()=>{audit('deny',{title,reasons});done(null)};
+  $('#apok').onclick=()=>{
+   const o=DB.approval,lk=lockedMsg(key);
+   if(!o){$('#apm').textContent='المالك لسه ما حددش كود الموافقة';return}
+   if(lk){$('#apm').textContent='متقفل '+lk+' دقيقة';return}
+   if(hashPin($('#apin').value,o.salt)===o.hash){okCount(key);audit('approve',{title,reasons,by:'كود الموافقة'});done(owner()||true)}
+   else{failCount(key);audit('badpin',{title,note:'كود موافقة غلط'});tries++;$('#apin').value='';$('#apm').textContent='الكود غلط';if(tries>=3)done(null)}
+  };
+  setTimeout(()=>{const i=$('#apin');i&&i.focus()},50);
+ });
+}
+
+// ---- سجل المخزون والجرد ----
+let mvItem=0;
+function rMoves(){
+ const L=DB.moves.filter(m=>!mvItem||m.item===mvItem).slice(-200).reverse();
+ $('#app').innerHTML=`<div class="card"><h2>📜 سجل حركة المخزون</h2><label>الصنف</label><select onchange="mvItem=+this.value;rMoves()"><option value="0">كل الأصناف</option>${DB.items.filter(i=>!i.service).map(i=>`<option value="${i.id}" ${i.id===mvItem?'selected':''}>${esc(i.name)}</option>`).join('')}</select>
+ <div class="tw" style="margin-top:8px">${L.length?'<table><tr><th>الوقت</th><th>الصنف</th><th>الحركة</th><th>الرصيد</th><th>السبب / بواسطة</th></tr>'+L.map(m=>`<tr><td style="font-size:11px">${new Date(m.t).toLocaleString('ar-EG',{day:'numeric',month:'numeric',hour:'2-digit',minute:'2-digit'})}</td><td>${esc(m.name)}</td><td><b style="color:${m.d<0?'var(--bad)':'var(--ok)'}">${m.d>0?'+':''}${m.d}</b></td><td>${m.after}</td><td style="font-size:12px">${/يدوي|جرد/.test(m.why)?'<span class="tag low">'+esc(m.why)+'</span>':esc(m.why)}<br><small>${esc(m.un)}</small></td></tr>`).join('')+'</table>':'<div class="empty">مفيش حركات</div>'}</div>
+ <button class="btn o" style="margin-top:8px" onclick="go('stock')">رجوع للمخزون</button></div>`;
+}
+function stocktake(){
+ if(!can('stocktake')){alert('مش مسموح');return}
+ const P=DB.items.filter(i=>!i.service);
+ openModal(`<h2>📋 جرد المخزون</h2><small>عدّ الموجود فعلياً واكتبه. سيب الخانة فاضية للصنف اللي مش هتعدّه.</small>
+ ${P.map(i=>`<div class="cart-i"><span>${esc(i.name)}${isOwner()?` <small>(النظام ${i.qty})</small>`:''}</span><input type="number" min="0" class="stk" data-id="${i.id}" style="width:80px"></div>`).join('')}
+ <div class="row"><button class="btn k" onclick="doStocktake()">تسجيل الجرد</button><button class="btn o" onclick="closeModal()">إلغاء</button></div>`);
+}
+function doStocktake(){
+ const diffs=[];
+ document.querySelectorAll('.stk').forEach(e=>{if(e.value==='')return;const it=DB.items.find(i=>i.id===+e.dataset.id),c=Math.max(0,Math.floor(+e.value||0));if(it&&c!==it.qty){diffs.push({id:it.id,name:it.name,was:it.qty,now:c,loss:(it.qty-c)*(it.cost||0)});moveStock(it,c-it.qty,'جرد (عدّ فعلي)',0)}});
+ audit('stocktake',{diffs:diffs.map(d=>[d.name,d.was,d.now])});save();
+ closeModal();
+ if(isOwner()){const tl=diffs.reduce((a,d)=>a+d.loss,0);openModal(`<h2>نتيجة الجرد</h2>${diffs.length?diffs.map(d=>`<div class="cart-i"><span>${esc(d.name)}</span><span style="color:${d.now<d.was?'var(--bad)':'var(--ok)'}">${d.was} → ${d.now}</span></div>`).join('')+`<div class="total" style="color:${tl>0?'var(--bad)':'var(--ok)'}">${tl>0?'عجز':'زيادة'} بقيمة ${money(Math.abs(tl))}</div>`:'<div class="empty">الجرد مطابق ✅</div>'}<button class="btn" onclick="closeModal();rStock()">تمام</button>`)}
+ else{alert('تم تسجيل الجرد');rStock()}
+}
+
+// ---- قفل الخزنة ----
+function cashFor(d){
+ const isC=m=>!m||m==='cash',pd=s=>s.paid0??s.paid??saleTotal(s),
+  inS=DB.sales.filter(s=>s.date===d&&isC(s.method)).reduce((a,s)=>a+pd(s),0),
+  inO=DB.sales.filter(s=>s.date===d&&!isC(s.method)).reduce((a,s)=>a+pd(s),0)+DB.custPay.filter(p=>p.date===d&&!isC(p.method)).reduce((a,p)=>a+p.amount,0),
+  inP=DB.custPay.filter(p=>p.date===d&&isC(p.method)).reduce((a,p)=>a+p.amount,0),
+  outE=DB.expenses.filter(e=>e.date===d).reduce((a,e)=>a+e.amount,0),
+  outW=wageSum(d,d),outP=DB.purchases.filter(p=>p.date===d).reduce((a,p)=>a+(p.paid||0),0)+DB.supPay.filter(p=>p.date===d).reduce((a,p)=>a+p.amount,0);
+ return{inS,inO,inP,outE,outW,outP,exp:inS+inP-outE-outW-outP};
+}
+function rClose(){
+ const d=dkey(),c=cashFor(d),own=isOwner();
+ const by={};DB.sales.filter(s=>s.date===d).forEach(s=>{const k=s.un||'؟';by[k]=(by[k]||0)+saleTotal(s)});
+ const cl=DB.closings.slice(-15).reverse();
+ $('#app').innerHTML=`<div class="card"><h2>💰 قفل الخزنة — ${d}</h2>
+ ${own?`<div class="cart-i"><span>مبيعات نقدية</span><b>${money(c.inS)}</b></div><div class="cart-i"><span>مدفوع بوسائل تانية (مش في الدرج)</span><b style="color:var(--mut)">${money(c.inO)}</b></div><div class="cart-i"><span>سداد عملاء نقدي</span><b>${money(c.inP)}</b></div><div class="cart-i"><span>مصروفات</span><b>- ${money(c.outE)}</b></div><div class="cart-i"><span>مرتبات وأجور</span><b>- ${money(c.outW)}</b></div><div class="cart-i"><span>دفعات موردين</span><b>- ${money(c.outP)}</b></div><div class="total">المفروض في الخزنة: ${money(c.exp)}</div>
+ ${Object.keys(by).length?'<div class="sec">مبيعات كل موظف النهارده</div>'+Object.entries(by).map(([k,v])=>`<div class="cart-i"><span>👤 ${esc(k)}</span><b>${money(v)}</b></div>`).join(''):''}`:'<p style="font-size:13px;color:var(--mut)">عدّ الفلوس اللي في الدرج واكتب المبلغ. (الحساب بيظهر للمالك بس).</p>'}
+ <label>الفلوس الفعلية في الدرج</label><input id="cl_a" type="number" min="0"><label>ملاحظة</label><input id="cl_n">
+ <button class="btn k" style="width:100%;margin-top:8px" onclick="doClose()">تسجيل القفل</button></div>
+ ${own?`<div class="card"><h2>آخر عمليات القفل</h2>${cl.length?cl.map(x=>`<div class="cart-i"><span>${x.date} · ${esc(x.un)}<br><small>مفروض ${money(x.expected)} · فعلي ${money(x.actual)}</small></span><span class="tag ${x.diff<0?'low':'ok'}">${x.diff>0?'+':''}${money(x.diff)}</span></div>`).join(''):'<div class="empty">لسه</div>'}</div>`:''}`;
+}
+function doClose(){
+ const v=$('#cl_a').value;if(v===''||!(+v>=0)){alert('اكتب المبلغ');return}
+ const d=dkey(),c=cashFor(d),a=+v,x={id:uid(),date:d,t:nowISO(),expected:c.exp,actual:a,diff:a-c.exp,u:ME.id,un:ME.name,note:$('#cl_n').value};
+ DB.closings.push(x);audit('close',{expected:x.expected,actual:a,diff:x.diff});save();
+ if(isOwner()){const k=x.diff;alert(k===0?'الخزنة مظبوطة ✅':(k<0?'⚠️ عجز '+money(-k):'زيادة '+money(k)));rClose()}
+ else{alert('تم تسجيل القفل ✅');go('home')}
+}
+
+// ---- المستخدمين ----
+function rUsers(){
+ $('#app').innerHTML=`<div class="card"><h2>👥 المستخدمين والصلاحيات</h2>${DB.users.map(u=>`<div class="cart-i"><span>${esc(u.name)} <span class="tag">${u.role==='owner'?'مالك':'موظف'}</span>${u.active===false?' <span class="tag low">موقوف</span>':''}</span><button class="btn s o" onclick="userForm(${u.id})">✏️</button></div>`).join('')}
+ <button class="btn" style="margin-top:8px" onclick="userForm(0)">+ موظف جديد</button> <button class="btn o" onclick="go('settings')">رجوع</button></div>`;
+}
+function userForm(id){
+ const u=id?DB.users.find(x=>x.id===id):{name:'',role:'staff',perms:{...DEFPERMS},active:true},st=u.role==='staff',P=u.perms||DEFPERMS;
+ openModal(`<h2>${id?'تعديل':'إضافة'} ${st?'موظف':'المالك'}</h2><label>الاسم</label><input id="uf_n" value="${esc(u.name)}">
+ <label>${id?'كلمة سر جديدة (سيبها فاضية لو مش هتغيرها)':'كلمة السر (4 على الأقل)'}</label><input id="uf_p" type="password" autocomplete="new-password">
+ ${st?`<label><input type="checkbox" id="uf_a" ${u.active!==false?'checked':''}> الحساب شغال</label><div class="sec">الصلاحيات</div>${PERMS.map(([k,l])=>`<label style="display:flex;gap:8px;align-items:center;margin:4px 0"><input type="checkbox" class="uf_pm" data-k="${k}" ${P[k]?'checked':''}> ${l}</label>`).join('')}<label>أقصى خصم من غير موافقة (%)</label><input id="uf_d" type="number" min="0" max="100" value="${P.discountPct??5}">`:''}
+ <div class="row"><button class="btn k" onclick="saveUser(${id||0})">حفظ</button><button class="btn o" onclick="closeModal()">إلغاء</button></div>`);
+}
+function saveUser(id){
+ const n=$('#uf_n').value.trim(),p=$('#uf_p').value;let u=id?DB.users.find(x=>x.id===id):null;
+ if(!n){alert('اكتب الاسم');return}
+ if(DB.users.some(x=>x.id!==id&&x.name===n)){alert('الاسم متكرر');return}
+ const own=u&&u.role==='owner';
+ if(!id&&p.length<4){alert('كلمة السر 4 على الأقل');return}
+ if(p&&own&&p.length<6){alert('كلمة سر المالك 6 على الأقل');return}
+ if(p&&!own&&p.length<4){alert('كلمة السر 4 على الأقل');return}
+ if(p&&DB.approval&&hashPin(p,DB.approval.salt)===DB.approval.hash){alert('كلمة السر دي هي نفس كود الموافقة. اختار حاجة مختلفة');return}
+ if(!u){u={id:uid(),role:'staff',active:true};DB.users.push(u)}
+ u.name=n;
+ if(p){u.salt=rndSalt();u.hash=hashPin(p,u.salt);if(own&&u.id===ME.id)MEKEY=sealKey(p)}
+ if(u.role==='staff'){
+  u.active=$('#uf_a').checked;u.perms={};document.querySelectorAll('.uf_pm').forEach(c=>u.perms[c.dataset.k]=c.checked?1:0);u.perms.discountPct=Math.max(0,Math.min(100,+$('#uf_d').value||0));
+ }
+ audit('user',(id?'تعديل ':'إضافة ')+u.name+(p?' (كلمة سر جديدة)':''));sealNow();save();closeModal();rUsers();if(p&&own&&u.id===ME.id)setTimeout(newRecovery,100);
+}
+
+// ---- سجل العمليات ----
+function rLog(){
+ const L=DB.log.slice(-150).reverse(),lab={sale:'🧾 بيع',void:'❌ إلغاء فاتورة',exp:'💸 مصروف',expdel:'🗑 حذف مصروف',login:'دخول',logout:'خروج',badpin:'🚨 كلمة سر غلط',approve:'✅ موافقة',deny:'⛔ رفض',item:'📦 صنف',stocktake:'📋 جرد',close:'💰 قفل خزنة',user:'👥 مستخدم',pay:'💵 سداد عميل',loss:'🗑️ هالك',payroll:'👷 مرتب',payrolldel:'↩️ حذف مرتب',approvalcode:'🔑 كود الموافقة',section:'🗂️ قسم',car:'🚗 ماركات',lossdel:'↩️ حذف هالك',diary:'📓 يومية',diarydel:'🗑 حذف يومية',worker:'🔧 فني',purchase:'🏭 توريد',purdel:'🗑 حذف توريد',cust:'👤 عميل',custdel:'🗑 حذف عميل',restore:'♻️ استرجاع',wipe:'🗑 مسح الكل',setup:'إعداد',ack:'اعتماد',supdel:'🏭 مورد'};
+ const fmt=d=>typeof d==='object'?Object.entries(d||{}).filter(([k])=>k!=='h').map(([k,v])=>k+': '+(typeof v==='object'?JSON.stringify(v):v)).join(' · '):String(d||'');
+ $('#app').innerHTML=`<div class="card"><h2>🛡️ سجل العمليات</h2><div class="row"><button class="btn k" onclick="runVerify()">🔍 فحص السلامة</button><button class="btn o" onclick="exportLog()">⬇️ تصدير</button><button class="btn o" onclick="go('settings')">رجوع</button></div>
+ <div class="tw" style="margin-top:8px">${L.map(e=>`<div class="cart-i" style="font-size:12px;align-items:flex-start"><span><b>${lab[e.a]||esc(e.a)}</b> · ${esc(e.un)}<br><small style="color:var(--mut)">${esc(fmt(e.d)).slice(0,160)}</small></span><small>${new Date(e.t).toLocaleString('ar-EG',{day:'numeric',month:'numeric',hour:'2-digit',minute:'2-digit'})}</small></div>`).join('')||'<div class="empty">فاضي</div>'}</div></div>`;
+}
+function runVerify(){const I=verifyAll(MEKEY);if(I.length)showAlerts(I);else openModal('<h2 style="color:var(--ok)">✅ كل حاجة سليمة</h2><p>السجل، الفواتير، المصروفات والمخزون متطابقين ومفيش تلاعب.</p><button class="btn" onclick="closeModal()">تمام</button>')}
+function exportLog(){shareModal('keyshop-audit-'+dkey()+'.txt',DB.log.map(e=>[e.n,e.t,e.un,e.a,JSON.stringify(e.d)].join(' | ')).join('\n'),'سجل العمليات','text/plain')}
+
+function rSettings(){
+ if(!isOwner()){$('#app').innerHTML=`<div class="card"><h2>👤 ${esc(ME.name)}</h2><div class="row"><button class="btn k" onclick="go('close')">💰 قفل الخزنة</button><button class="btn" onclick="go('moves')">📜 سجل المخزون</button><button class="btn o" onclick="lockNow()">🔒 خروج</button></div></div>`;return}
+ rSettings0();
+ $('#app').insertAdjacentHTML('afterbegin',`<div class="card"><h2>🛡️ الأمان والرقابة</h2><div class="row"><button class="btn" onclick="go('users')">👥 الموظفين</button><button class="btn" onclick="go('log')">🛡️ سجل العمليات</button></div><div class="row" style="margin-top:6px"><button class="btn" onclick="go('moves')">📜 سجل المخزون</button><button class="btn" onclick="go('close')">💰 قفل الخزنة</button></div><button class="btn o" style="margin-top:6px;width:100%" onclick="toggleRemember()">💾 تذكر الدخول 30 دقيقة: ${DB.remember===false?'متوقف':'شغال'}</button><button class="btn o" style="margin-top:6px;width:100%" onclick="setApprovalForm()">🔑 تغيير كود الموافقة</button><button class="btn o" style="margin-top:6px;width:100%" onclick="newRecovery()">🆘 مفتاح استرجاع جديد (${DB.recov?'متسجل':'مش متسجل'})</button><button class="btn o" style="margin-top:6px;width:100%" onclick="runVerify()">🔍 فحص السلامة دلوقتي</button></div>`);
+}
+
+// ============ الهالك والخسائر + يوميات الفنيين ============
+const LOSS_WHY=['كسر / تلف أثناء القص','غلط في القص أو البرمجة','ضاع / مفقود','تالف من المورد','مرتجع تالف','انتهاء / عيب','أخرى'];
+const lossOk=()=>isOwner()||!ME.perms||ME.perms.loss!==0;
+const lossSum=(f,t)=>DB.losses.filter(x=>inRange(x.date,f,t)).reduce((a,x)=>a+x.amount,0);
+function people(){return [...DB.workers.filter(w=>w.active!==false).map(w=>({id:w.id,name:w.name,role:w.role})),...DB.users.filter(u=>u.active!==false).map(u=>({id:u.id,name:u.name,role:u.role==='owner'?'المالك':'موظف'}))]}
+const personName=id=>{const p=people().concat(DB.workers.map(w=>({id:w.id,name:w.name}))).find(x=>x.id===id);return p?p.name:''};
+const peopleOpts=(sel)=>'<option value="0">— بدون —</option>'+people().map(p=>`<option value="${p.id}" ${p.id===sel?'selected':''}>${esc(p.name)} (${p.role})</option>`).join('');
+
+let LM='month';
+function rLoss(){
+ if(!lossOk()){alert('مش مسموح');go('home');return}
+ const d=dkey(),m=d.slice(0,8)+'01',y=d.slice(0,4)+'-01-01',cv=can('viewCost');
+ const L=[...DB.losses].reverse().slice(0,80);
+ $('#app').innerHTML=`<div class="card"><h2>🗑️ الهالك والخسائر</h2>
+ ${cv?`<div class="grid"><div class="stat r">النهارده<b>${money(lossSum(d,d))}</b></div><div class="stat r">الشهر<b>${money(lossSum(m,'9999'))}</b></div><div class="stat r">السنة<b>${money(lossSum(y,'9999'))}</b></div></div>`:''}
+ <p style="font-size:12px;color:var(--mut)">الهالك بيتخصم من المخزون وبيتحسب تكلفته خسارة بتتنزل من ربح اليوم والشهر والسنة. لو عملت مفتاح تاني بدل التالف، المفتاح الجديد بيتخصم من المخزون كمان وبيتباع للعميل عادي.</p>
+ <button class="btn" style="width:100%" onclick="lossForm()">+ تسجيل هالك / خسارة</button></div>
+ <div class="card"><h2>السجل</h2>${L.length?L.map(x=>`<div class="cart-i" style="align-items:flex-start"><span>${x.type==='scrap'?'🔑 '+esc(x.name)+' × '+x.qty:'💸 '+esc(x.name)}<br><small style="color:var(--mut)">${x.date} · ${esc(x.reason)}${x.wn?' · 🔧 '+esc(x.wn):''} · ${esc(x.un)}</small></span><span>${cv?'<b style="color:var(--bad)">'+money(x.amount)+'</b><br>':''}${isOwner()?`<button class="btn s d" onclick="lossDel(${x.id})">✕</button>`:''}</span></div>`).join(''):'<div class="empty">مفيش هالك مسجل 👍</div>'}</div>`;
+ $('#app').insertAdjacentHTML('beforeend','<button class="btn o" style="width:100%" onclick="go(\'sell\')">رجوع للبيع</button>');
+}
+function lossForm(){
+ openModal(`<h2>تسجيل هالك / خسارة</h2>
+ <div class="row"><button class="btn" id="lt1" onclick="lossType('scrap')">🔑 صنف هالك</button><button class="btn o" id="lt2" onclick="lossType('other')">💸 خسارة بمبلغ</button></div>
+ <div id="lf_scrap"><label>الصنف</label><select id="lf_i">${DB.items.filter(i=>!i.service&&i.qty>0).map(i=>`<option value="${i.id}">${esc(i.name)} (متاح ${i.qty})</option>`).join('')}</select><label>الكمية الهالكة</label><input id="lf_q" type="number" min="1" value="1"></div>
+ <div id="lf_other" style="display:none"><label>وصف الخسارة</label><input id="lf_n" placeholder="مثال: زبون ما دفعش / غلط تسعير"><label>المبلغ</label><input id="lf_a" type="number" min="0"></div>
+ <label>السبب</label><select id="lf_r">${LOSS_WHY.map(w=>`<option>${w}</option>`).join('')}</select>
+ <label>الفني / المسؤول (اختياري)</label><select id="lf_w">${peopleOpts(0)}</select><label>ملاحظة</label><input id="lf_x">
+ <div class="row"><button class="btn k" onclick="lossSave()">حفظ</button><button class="btn o" onclick="closeModal()">إلغاء</button></div>`);
+ window.LT='scrap';
+}
+function lossType(t){window.LT=t;$('#lf_scrap').style.display=t==='scrap'?'':'none';$('#lf_other').style.display=t==='other'?'':'none';$('#lt1').className='btn'+(t==='scrap'?'':' o');$('#lt2').className='btn'+(t==='other'?'':' o')}
+function lossSave(){
+ if(!lossOk()){alert('مش مسموح');return}
+ const w=+$('#lf_w').value||0,why=$('#lf_r').value+($('#lf_x').value?' — '+$('#lf_x').value:''),id=uid();let x;
+ if(window.LT==='scrap'){
+  const it=DB.items.find(i=>i.id===+$('#lf_i').value),q=Math.floor(+$('#lf_q').value||0);
+  if(!it||q<1){alert('اختار الصنف والكمية');return}
+  if(q>it.qty){alert('الكمية أكبر من المتاح ('+it.qty+')');return}
+  x={id,date:dkey(),type:'scrap',item:it.id,name:it.name,qty:q,unit:it.cost||0,amount:q*(it.cost||0),reason:why,w,wn:personName(w),u:ME.id,un:ME.name};
+  moveStock(it,-q,'هالك: '+$('#lf_r').value,id);
+ }else{
+  const a=+$('#lf_a').value,n=$('#lf_n').value.trim();
+  if(!n||!(a>0)){alert('اكتب الوصف والمبلغ');return}
+  x={id,date:dkey(),type:'other',name:n,qty:0,unit:0,amount:a,reason:why,w,wn:personName(w),u:ME.id,un:ME.name};
+ }
+ DB.losses.push(x);audit('loss',{id,amount:x.amount,name:x.name,qty:x.qty,reason:x.reason});closeModal();rLoss();
+}
+async function lossDel(id){
+ const x=DB.losses.find(l=>l.id===id);if(!x)return;
+ if(!await askOwner('حذف هالك',['حذف '+x.name+' ('+x.amount+')']))return;
+ if(x.type==='scrap'){const it=DB.items.find(i=>i.id===x.item);if(it)moveStock(it,x.qty,'إلغاء هالك',id)}
+ DB.losses=DB.losses.filter(l=>l.id!==id);audit('lossdel',{id,amount:x.amount,name:x.name});rLoss();
+}
+function lossCard(L){
+ if(!L.length)return '';
+ return `<div class="card"><h2>🗑️ تفاصيل الهالك والخسائر</h2>${L.slice(-30).reverse().map(x=>`<div class="cart-i"><span>${x.type==='scrap'?esc(x.name)+' × '+x.qty:esc(x.name)}<br><small style="color:var(--mut)">${x.date} · ${esc(x.reason)}</small></span><b style="color:var(--bad)">${money(x.amount)}</b></div>`).join('')}</div>`;
+}
+
+// ---- يوميات الفنيين والموظفين ----
+function workerToggle(id){const w=DB.workers.find(x=>x.id===id);w.active=w.active===false;audit('worker',(w.active?'تشغيل ':'إيقاف ')+w.name);rDiary()}
+const homeShortcuts=()=>!lossOk()?'':`<div class="card">${lossOk()?`<button class="btn d" style="width:100%" onclick="go('loss')">🗑️ هالك وخسارة</button>`:''}</div>`;
+
+// ============ المرتبات والأجور ============
+const PAYK={daily:'💵 يومية',salary:'💰 مرتب',advance:'🤝 سلفة',bonus:'🎁 مكافأة',deduct:'✂️ خصم'};
+const wageOut=x=>x.kind!=='deduct';
+const wageSum=(f,t)=>DB.payroll.filter(x=>wageOut(x)&&inRange(x.date,f,t)).reduce((a,x)=>a+x.amount,0);
+let EXT='exp',PM=null;
+const curMonth=()=>dkey().slice(0,7);
+function rExp(){
+ const bar=can('payroll')?`<div class="card"><div class="row"><button class="btn ${EXT==='exp'?'':'o'}" onclick="EXT='exp';rExp()">💸 المصروفات</button><button class="btn ${EXT==='pay'?'':'o'}" onclick="EXT='pay';rExp()">👷 المرتبات</button></div></div>`:'';
+ if(EXT==='pay'&&can('payroll')){rPay();$('#app').insertAdjacentHTML('afterbegin',bar);return}
+ rExp0();$('#app').insertAdjacentHTML('afterbegin',bar);
+}
+function wInfo(w,m){
+ const E=DB.payroll.filter(x=>x.worker===w.id&&x.month===m),sum=k=>E.filter(x=>x.kind===k).reduce((a,x)=>a+x.amount,0);
+ const r={E,daily:sum('daily'),days:E.filter(x=>x.kind==='daily').length,salary:sum('salary'),advance:sum('advance'),bonus:sum('bonus'),deduct:sum('deduct')};
+ r.due=(w.pay==='monthly'?(+w.rate||0):0)+r.bonus-r.advance-r.deduct-r.salary;
+ return r;
+}
+function rPay(){
+ const m=PM||curMonth(),d=dkey(),W=DB.workers.filter(w=>w.active!==false);
+ const mf=m+'-01',mt=m+'-31',tot=wageSum(mf,mt),td=wageSum(d,d);
+ $('#app').innerHTML=`<div class="card"><h2>👷 المرتبات والأجور</h2><label>الشهر</label><input type="month" value="${m}" onchange="PM=this.value||null;rPay()">
+ <div class="grid" style="margin-top:8px"><div class="stat r">صُرف النهارده<b>${money(td)}</b></div><div class="stat r">صُرف في الشهر<b>${money(tot)}</b></div></div>
+ <p style="font-size:12px;color:var(--mut)">اللي بتصرفه بيتحسب مصروف وبيتنزل من الربح (يومي وشهري وسنوي) وبيدخل في حساب الخزنة.</p>
+ <button class="btn" style="width:100%" onclick="workerForm()">+ إضافة موظف / فني للمرتبات</button></div>
+ ${W.length?W.map(w=>{const i=wInfo(w,m);return `<div class="card"><h2>${esc(w.name)} <span class="tag">${esc(w.role)}</span> <span class="tag ${w.pay==='monthly'?'ok':''}">${w.pay==='daily'?'باليومية '+money(w.rate):w.pay==='monthly'?'شهري '+money(w.rate):'من غير أجر'}</span></h2>
+ <div class="row" style="font-size:13px">${w.pay==='daily'?`<div>أيام اتدفعت<br><b>${i.days}</b></div><div>إجمالي اليوميات<br><b>${money(i.daily)}</b></div>`:''}<div>سلف<br><b>${money(i.advance)}</b></div><div>خصومات<br><b>${money(i.deduct)}</b></div><div>مكافآت<br><b>${money(i.bonus)}</b></div></div>
+ ${w.pay==='monthly'?`<div class="cart-i"><span>المرتب ${money(w.rate)} + مكافآت − سلف − خصومات − اللي اتصرف</span><b style="color:${i.due>0?'var(--bad)':'var(--ok)'}">المتبقي ${money(i.due)}</b></div>`:''}
+ <div class="chips" style="margin-top:6px">${w.pay==='daily'?`<button class="chip" onclick="payDo(${w.id},'daily')">💵 صرف يومية</button>`:''}${w.pay==='monthly'?`<button class="chip" onclick="payDo(${w.id},'salary')">💰 صرف المرتب</button>`:''}<button class="chip" onclick="payDo(${w.id},'advance')">🤝 سلفة</button><button class="chip" onclick="payDo(${w.id},'bonus')">🎁 مكافأة</button><button class="chip" onclick="payDo(${w.id},'deduct')">✂️ خصم</button><button class="chip" onclick="workerForm(${w.id})">✏️ تعديل</button></div>
+ ${i.E.length?'<div class="sec">حركات الشهر</div>'+i.E.slice().reverse().map(x=>`<div class="cart-i" style="font-size:12px"><span>${PAYK[x.kind]} · ${x.date}${x.note?' · '+esc(x.note):''}</span><span><b>${money(x.amount)}</b> <button class="btn s d" onclick="payDel(${x.id})">✕</button></span></div>`).join(''):''}</div>`}).join(''):'<div class="card"><div class="empty">ضيف الناس اللي بتصرف لهم مرتبات</div></div>'}`;
+}
+function payDo(wid,kind){
+ const w=DB.workers.find(x=>x.id===wid),m=PM||curMonth(),i=wInfo(w,m);
+ let def=kind==='daily'?w.rate:kind==='salary'?Math.max(0,i.due):'';
+ openModal(`<h2>${PAYK[kind]} — ${esc(w.name)}</h2>${kind==='salary'?`<small>المتبقي بعد السلف والخصومات والمكافآت: ${money(i.due)}</small>`:''}
+ <label>المبلغ</label><input id="py_a" type="number" min="0" value="${def}"><label>التاريخ</label><input id="py_d" type="date" value="${dkey()}"><label>ملاحظة</label><input id="py_n">
+ <div class="row"><button class="btn k" onclick="paySave2(${wid},'${kind}')">حفظ</button><button class="btn o" onclick="closeModal()">إلغاء</button></div>`);
+}
+function paySave2(wid,kind){
+ if(!can('payroll')){alert('مش مسموح');return}
+ const w=DB.workers.find(x=>x.id===wid),a=+$('#py_a').value,d=$('#py_d').value||dkey();
+ if(!(a>0)){alert('اكتب المبلغ');return}
+ if(kind==='daily'&&DB.payroll.some(x=>x.worker===wid&&x.kind==='daily'&&x.date===d)&&!confirm('اتصرفت يومية لـ'+w.name+' في اليوم ده. تصرف تاني؟'))return;
+ const id=uid(),x={id,date:d,month:d.slice(0,7),worker:wid,wn:w.name,kind,amount:a,note:$('#py_n').value.trim(),u:ME.id,un:ME.name};
+ DB.payroll.push(x);audit('payroll',{id,kind,amount:a,who:w.name,date:d});closeModal();rPay();
+}
+async function payDel(id){
+ const x=DB.payroll.find(p=>p.id===id);if(!x)return;
+ if(!await askOwner('حذف حركة مرتب',[PAYK[x.kind]+' '+x.wn+' بمبلغ '+x.amount]))return;
+ DB.payroll=DB.payroll.filter(p=>p.id!==id);audit('payrolldel',{id,kind:x.kind,amount:x.amount,who:x.wn});rPay();
+}
+function workerForm(id){
+ const w=id?DB.workers.find(x=>x.id===id):{name:'',role:'فني',pay:'daily',rate:0,active:true};
+ openModal(`<h2>${id?'تعديل':'إضافة'} موظف / فني</h2><label>الاسم</label><input id="wf_n" value="${esc(w.name)}">
+ <label>الوظيفة</label><select id="wf_r">${['مهندس','فني','موظف','عامل'].map(r=>`<option ${r===w.role?'selected':''}>${r}</option>`).join('')}</select>
+ <label>نظام الأجر</label><select id="wf_p"><option value="daily" ${w.pay==='daily'?'selected':''}>باليومية (يوم بيوم)</option><option value="monthly" ${w.pay==='monthly'?'selected':''}>مرتب شهري</option><option value="none" ${w.pay==='none'?'selected':''}>من غير أجر (يظهر في اليوميات بس)</option></select>
+ <label>قيمة اليومية / المرتب الشهري</label><input id="wf_a" type="number" min="0" value="${w.rate||0}">
+ ${id?`<label><input type="checkbox" id="wf_x" ${w.active!==false?'checked':''}> شغال</label>`:''}
+ <div class="row"><button class="btn k" onclick="workerSave(${id||0})">حفظ</button><button class="btn o" onclick="closeModal()">إلغاء</button></div>`);
+}
+function workerSave(id){
+ const n=$('#wf_n').value.trim();if(!n){alert('اكتب الاسم');return}
+ const o={name:n,role:$('#wf_r').value,pay:$('#wf_p').value,rate:+$('#wf_a').value||0};
+ if(id){const w=DB.workers.find(x=>x.id===id);Object.assign(w,o,{active:$('#wf_x').checked});audit('worker','تعديل '+n+' ('+o.pay+' '+o.rate+')')}
+ else{DB.workers.push({id:uid(),active:true,...o});audit('worker','إضافة '+n+' ('+o.pay+' '+o.rate+')')}
+ closeModal();render();
+}
+
+
+// ---- زرار الرجوع في الموبايل ----
+let exitArm=0;
+function toast(t){let e=$('#toast');if(!e){e=document.createElement('div');e.id='toast';e.style.cssText='position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:#111c;color:#fff;padding:10px 16px;border-radius:20px;z-index:200;font-size:14px';document.body.appendChild(e)}e.textContent=t;e.style.display='block';clearTimeout(toast.t);toast.t=setTimeout(()=>e.style.display='none',1800)}
+function navGuard(){try{history.pushState({app:1},'')}catch(e){}}
+function navInit(){try{history.replaceState({base:1},'');navGuard()}catch(e){}}
+window.addEventListener('popstate',()=>{
+ const shown=id=>{const e=$(id);return e&&(e.classList.contains('show')||e.style.display==='block')};
+ if(shown('#ap')||shown('#lock')||!ME){navGuard();return}
+ if(shown('#viewer')){$('#viewer').classList.remove('show');navGuard();return}
+ if(shown('#modal')){closeModal();navGuard();return}
+ if(PST.length||page!=='home'){const p=PST.pop()||'home';NAVBACK=true;go(p);NAVBACK=false;navGuard();return}
+ navGuard();
+});
+
+
+// ============ الأقسام ============
+const SEC_DEF=[...CATS,'نسخ مفاتيح','مفاتيح سيارات','أقفال وأبواب','رسوم'];
+function SECS(){const base=DB.sections||SEC_DEF,ex=[];DB.items.forEach(i=>[i.cat,i.grp].forEach(x=>{if(x&&x!=='خدمة'&&!base.includes(x)&&!ex.includes(x))ex.push(x)}));return [...base,...ex]}
+const secCount=c=>DB.items.filter(i=>i.cat===c||i.grp===c).length;
+function sectionsForm(){
+ const S=SECS();
+ openModal(`<h2>🗂️ الأقسام</h2><small style="color:var(--mut)">قسّم أصنافك وخدماتك زي ما تحب (مثال: مفاتيح سيارات، أحجار، إكسسوار...).</small>
+ ${S.map((c,i)=>`<div class="cart-i"><span>${esc(c)} <small style="color:var(--mut)">(${secCount(c)})</small></span><span>${c==='رسوم'?'<small>أساسي</small>':`<button class="btn s o" onclick="secRename(${i})">✏️</button> <button class="btn s d" onclick="secDel(${i})">✕</button>`}</span></div>`).join('')}
+ <label>قسم جديد</label><input id="sc_n" placeholder="مثال: أحجار"><div class="row"><button class="btn k" onclick="secAdd()">+ إضافة</button><button class="btn o" onclick="closeModal();render()">تم</button></div>`);
+}
+function secAdd(){
+ const n=$('#sc_n').value.trim();if(!n){alert('اكتب اسم القسم');return}
+ if(SECS().includes(n)||n==='الكل'||n==='خدمات'||n==='خدمة'){alert('القسم موجود');return}
+ DB.sections=SECS();DB.sections.push(n);audit('section','إضافة قسم '+n);sectionsForm();
+}
+async function secRename(i){
+ const S=SECS(),old=S[i],n=(prompt('الاسم الجديد للقسم:',old)||'').trim();
+ if(!n||n===old)return;
+ if(S.includes(n)||n==='الكل'||n==='خدمات'||n==='خدمة'){alert('الاسم ده موجود');return}
+ DB.sections=S;DB.sections[i]=n;DB.items.forEach(x=>{if(x.cat===old)x.cat=n;if(x.grp===old)x.grp=n});
+ if(sellCat===old)sellCat=n;audit('section','تغيير اسم قسم '+old+' إلى '+n);sectionsForm();
+}
+async function secDel(i){
+ const S=SECS(),c=S[i],cnt=secCount(c);
+ if(cnt){
+  if(c==='أخرى'){alert('قسم "أخرى" بيستقبل الأصناف المنقولة، مينفعش يتمسح وفيه أصناف');return}
+  if(!confirm('القسم فيه '+cnt+' صنف/خدمة. هتتنقل لقسم "أخرى". متأكد؟'))return;
+ }
+ DB.sections=S.filter((_,k)=>k!==i);if(cnt&&!DB.sections.includes('أخرى'))DB.sections.push('أخرى');
+ DB.items.forEach(x=>{if(x.cat===c)x.cat='أخرى';if(x.grp===c)x.grp='أخرى'});
+ if(sellCat===c)sellCat='الكل';audit('section','حذف قسم '+c+(cnt?' ونقل '+cnt+' إلى أخرى':''));sectionsForm();
+}
+
+
+// ============ طرق الدفع ============
+const PAYM=[['cash','💵 نقدي (كاش)'],['wallet','📱 محفظة (فودافون كاش / اتصالات / أورنج)'],['insta','⚡ إنستاباي'],['card','💳 بطاقة / فيزا'],['bank','🏦 تحويل بنكي']];
+const methodLabel=k=>(PAYM.find(x=>x[0]===(k||'cash'))||[0,k])[1];
+const payOpts=sel=>PAYM.map(([k,l])=>`<option value="${k}" ${k===(sel||'cash')?'selected':''}>${l}</option>`).join('');
+function payDebt(id){
+ if(!can('payDebt')){alert('مش مسموح');return}
+ const d=custDebt(id);if(!(d>0)){alert('مفيش دين على العميل ده');return}
+ openModal(`<h2>💵 سداد دين — ${esc(custName(id))}</h2><div class="total">المتبقي ${money(d)}</div><label>المبلغ المسدد</label><input id="pd_a" type="number" min="0" value="${d}"><label>طريقة الدفع</label><select id="pd_m">${payOpts()}</select>
+ <div class="row"><button class="btn k" onclick="payDebtSave(${id})">تسجيل</button><button class="btn o" onclick="closeModal()">إلغاء</button></div>`);
+}
+function payDebtSave(id){
+ if(!can('payDebt')){alert('مش مسموح');return}
+ const d=custDebt(id);let a=+$('#pd_a').value;if(!(a>0)){alert('اكتب المبلغ');return}a=Math.min(a,d);const a0=a,m=$('#pd_m').value;
+ for(const s of DB.sales.filter(s=>s.cust===id)){const rem=saleTotal(s)-(s.paid??saleTotal(s));if(rem>0&&a>0){const p=Math.min(rem,a);s.paid=(s.paid??saleTotal(s))+p;a-=p}}
+ DB.custPay.push({id:uid(),date:dkey(),cust:id,amount:a0-a,method:m,u:ME.id,un:ME.name});audit('pay',{cust:id,amount:a0-a,method:m});closeModal();rCust();
+}
+
+// ============ ماركات وموديلات العربيات ============
+const CARS_DEF=[
+['تويوتا',['كورولا','يارس','كامري','أفالون','راف فور','فورتشنر','هايلكس','لاند كروزر','بريوس','أوريس','كورولا كروس','C-HR','رش','إنوفا','سيينا','هايس']],
+['هيونداي',['النترا','أكسنت','فيرنا','i10','جراند i10','i20','i30','توسان','سانتافي','كريتا','سوناتا','ماتريكس','كونا','فينيو','النترا HD','إلنترا CN7']],
+['كيا',['سيراتو','ريو','سبورتاج','سورنتو','بيكانتو','كارنز','سول','ستونيك','سيلتوس','أوبتيما','كارنيفال','بيجاس']],
+['نيسان',['صني','سنترا','قشقاي','جوك','إكستريل','تيدا','كيكس','باترول','ألتيما','ميكرا','نوت','ماكسيما']],
+['شيفروليه',['لانوس','أوبترا','أفيو','كروز','ماليبو','كابتيفا','ماتيز','سبارك','سونيك','أورلاندو','ترافيرس','سيلفرادو','كامارو','تراكس']],
+['دايو',['لانوس','ماتيز','نوبيرا','ليجانزا','نيكسيا','ريسر','كيلوس']],
+['رينو',['لوجان','ميجان','سيمبول','فلوانس','داستر','كابتشر','كادجار','سانديرو','كليو','ترافيك','ماستر','تاليسمان','ستيبواي','كويد']],
+['بيجو',['301','508','206','207','208','307','308','405','2008','3008','5008','بارتنر','إكسبرت']],
+['سيتروين',['C3','C4','C5','C-Elysee','C3 إيركروس','بيرلنجو','C4 كاكتوس']],
+['فيات',['تيبو','128','131 شاهين','دوبلو','بونتو','بالينو','500','فيورينو','سيينا','أوفكو']],
+['سكودا',['أوكتافيا','فابيا','رابيد','سوبيرب','كودياك','كاروك','كامي','سكالا','ينتي']],
+['فولكس فاجن',['جولف','باسات','جيتا','بولو','تيجوان','توران','تي روك','أرتيون','سيروكو','بيتل','تواريج','كادي']],
+['أودي',['A1','A3','A4','A5','A6','A7','Q2','Q3','Q5','Q7','TT']],
+['بي إم دبليو',['316','318','320','325','520','523','530','730','X1','X3','X5','X6','1 سيريز','2 سيريز']],
+['مرسيدس',['C180','C200','C250','E200','E240','E300','A180','A200','B180','CLA','GLA','GLC','GLE','S350','S500','ML','190','فيتو']],
+['أوبل',['أسترا','كورسا','فيكترا','أوميجا','زافيرا','إنسيجنيا','موكا','كاسكادا','كادت','فيفارو']],
+['فورد',['فوكس','فيوجن','فييستا','إكسبلورر','إيكوسبورت','كوجا','موستنج','إيدج','رينجر','ترانزيت']],
+['ميتسوبيشي',['لانسر','أوتلاندر','باجيرو','إكليبس كروس','أتراج','ASX','L200','L300','سبيس ستار','ماجنوم']],
+['سوزوكي',['سويفت','ديزاير','ألتو','فيتارا','بالينو','سيليريو','أرتيجا','جراند فيتارا','إس كروس','ماروتي','إيرتيجا']],
+['هوندا',['سيفيك','أكورد','CR-V','سيتي','جاز','HR-V','بايلوت','أوديسي']],
+['مازدا',['3','6','2','CX-3','CX-5','CX-9','BT-50']],
+['سوبارو',['إمبريزا','فورستر','ليجاسي','XV','أوتباك']],
+['لكزس',['ES','IS','GS','RX','NX','LX','GX','UX']],
+['جيلي',['إمجراند','كولراي','أطلس','توجيلا','مونجارو','بينراي']],
+['شيري',['تيجو 3','تيجو 4','تيجو 7','تيجو 8','أريزو 5','أريزو 6','كيو كيو','A3']],
+['بي واي دي (BYD)',['F3','F0','S6','هان','تانج','سيجل','أتو 3','سونج','دولفين']],
+['شانجان',['CS35','CS55','CS75','CS85','CS95','إيدو','أليسون']],
+['إم جي (MG)',['MG3','MG5','MG6','ZS','HS','RX5','MG4','ماركس']],
+['هافال',['H6','جوليان','H2','H9','دارجو']],
+['دونج فينج / DFSK',['أيه 30','S50','جلوري 580','ميني فان','سيريز 5']],
+['جاك',['S2','S3','S4','JS4','T8','J7']],
+['بروتون',['ساجا','جين 2','بيرسونا','إكسورا','X70']],
+['سانج يونج',['تيفولي','كوراندو','ريكستون','موسو']],
+['جيب',['شيروكي','جراند شيروكي','رانجلر','كومباس','رينيجيد','باتريوت']],
+['لاند روفر',['رينج روفر','ديسكفري','إيفوك','ديفندر','فيلار','فريلاندر']],
+['فولفو',['S40','S60','S90','XC40','XC60','XC90','V40']],
+['ميني / سمارت',['كوبر','كونتري مان','فورتو']],
+['بورش',['كايين','ماكان','باناميرا','911','كايمان']],
+['جاكوار',['XF','XE','F-Pace','XJ']],
+['كاديلاك',['إسكاليد','CTS','SRX','XT5']],
+['دودج / كرايسلر',['تشارجر','دورانجو','رام','تشالنجر','300C','فوياجر']],
+['لادا',['ساماره','نيفا','2107','2110','جرانتا','فيستا']],
+['ميكروباص ونقل',['تويوتا هايس','ميتسوبيشي L300','شيفروليه فان','مازدا B2500','إيسوزو D-Max','جاك نقل','هيونداي H1','نيسان فان']],
+['موتوسيكل / توكتوك',['بجاج','هوندا','ياماها','فيسبا','سوزوكي','دايون','سيمفوني','توكتوك']],
+['أخرى',['موديل تاني']]
+];
+const carW=()=>DB.carDB||(DB.carDB=structuredClone(CARS_DEF));
+const CARDB=()=>DB.carDB||CARS_DEF;
+const brandNames=()=>CARDB().map(b=>b[0]);
+const modelsOf=b=>{const x=CARDB().find(y=>y[0]===b);return x?x[1]:[]};
+function carEnsure(b,m){ // يضيف الماركة/الموديل لو جديدين
+ if(!b)return;let x=CARDB().find(y=>y[0]===b);
+ if(!x){x=[b,[]];carW().push(x);x=carW().find(y=>y[0]===b)}
+ if(m&&!x[1].includes(m)){const w=carW().find(y=>y[0]===b);w[1].push(m)}
+}
+let showCars=false,sellBrand='',sellModel='',stockBrand='',stockModel='';
+const brandCount=b=>DB.items.filter(i=>i.brand===b).length;
+const carTag=i=>i.brand?esc(i.brand)+(i.model?' · '+esc(i.model):''):'';
+const carFilter=(i,b,m)=>!b||(i.brand===b&&(!m||i.model===m));
+function carCard(){
+ const used=brandNames().filter(b=>brandCount(b)>0);
+ let h='<div style="background:#eef6fb;border-radius:10px;padding:8px;margin:8px 0">';
+ if(!sellBrand){
+  h+=`<div class="chips">${used.map(b=>`<button class="chip" data-b="${esc(b)}" onclick="sellBrand=this.dataset.b;sellModel='';rSell()">${bLogo(b,22)}${esc(b)} (${brandCount(b)})</button>`).join('')}<button class="chip" onclick="brandPicker()">🔎 كل الماركات</button><button class="chip" onclick="brandAddQuick()">➕ ماركة جديدة</button></div>${used.length?'':'<small style="color:var(--mut)">لسه مفيش أصناف متسجل عليها ماركة. ضيف الماركة من شاشة الصنف (تبويب المخزون).</small>'}`;
+ }else{
+  const ms=[...new Set([...modelsOf(sellBrand),...DB.items.filter(i=>i.brand===sellBrand&&i.model).map(i=>i.model)])];
+  h+=`<div class="row" style="align-items:center"><b style="flex:1">${bLogo(sellBrand,30)}${esc(sellBrand)}</b><button class="btn s o" style="flex:0 0 auto" onclick="sellBrand='';sellModel='';rSell()">✕ كل العربيات</button></div>
+  <div class="chips"><button class="chip ${!sellModel?'on':''}" onclick="sellModel='';rSell()">الكل (${brandCount(sellBrand)})</button>${ms.map(m=>{const n=DB.items.filter(i=>i.brand===sellBrand&&i.model===m).length;return `<button class="chip ${sellModel===m?'on':''}" data-m="${esc(m)}" onclick="sellModel=this.dataset.m;rSell()">${esc(m)}${n?' ('+n+')':''}</button>`}).join('')}<button class="chip" onclick="modelAddQuick()">➕ موديل جديد</button></div>`;
+ }
+ return h+'</div>';
+}
+function brandPicker(){
+ openModal(`<h2>🚗 كل الماركات</h2><input id="bp_q" placeholder="🔍 ابحث عن ماركة..." oninput="brandPickList()"><div id="bp_l" style="max-height:50vh;overflow:auto;margin-top:8px"></div><div class="row" style="margin-top:8px"><button class="btn k" onclick="brandAddQuick($('#bp_q').value)">➕ ماركة جديدة</button><button class="btn o" onclick="closeModal()">إغلاق</button></div>`);
+ brandPickList();
+}
+function brandPickList(){
+ const q=($('#bp_q').value||'').trim();
+ const L=brandNames().filter(b=>brandMatch(b,q));
+ $('#bp_l').innerHTML=(L.length?L:[]).map(b=>`<div class="cart-i" style="cursor:pointer" data-b="${esc(b)}" onclick="sellBrand=this.dataset.b;sellModel='';closeModal();go('sell');rSell()"><span>${bLogo(b,28)}${esc(b)}</span><span class="tag ${brandCount(b)?'ok':''}">${brandCount(b)} صنف</span></div>`).join('')||`<div class="empty">مفيش ماركة بالاسم ده<br><button class="btn" style="margin-top:8px" onclick="brandAddQuick($('#bp_q').value)">➕ أضيف "${esc(q)}"</button></div>`;
+}
+const LG=()=>DB.carLogo||(DB.carLogo={});
+function bLogo(b,z){z=z||26;const d=(DB.carLogo||{})[b];
+ if(d)return `<img src="${d}" style="width:${z}px;height:${z}px;object-fit:contain;border-radius:6px;background:#fff;vertical-align:middle;margin-inline-end:5px">`;
+ let h=0;for(const c of b)h=(h*31+c.charCodeAt(0))%360;
+ return `<span style="display:inline-flex;width:${z}px;height:${z}px;border-radius:50%;background:hsl(${h},45%,42%);color:#fff;font-size:${Math.round(z*.5)}px;font-weight:700;align-items:center;justify-content:center;vertical-align:middle;margin-inline-end:5px">${esc([...b][0]||'?')}</span>`}
+function logoRead(f,cb){if(!f)return;const r=new FileReader();r.onload=()=>{const im=new Image();im.onload=()=>{const S=96,c=document.createElement('canvas');c.width=c.height=S;const x=c.getContext('2d'),k=Math.min(S/im.width,S/im.height),w=im.width*k,h=im.height*k;x.drawImage(im,(S-w)/2,(S-h)/2,w,h);cb(c.toDataURL('image/png'))};im.onerror=()=>alert('الصورة دي مش شغالة');im.src=r.result};r.readAsDataURL(f)}
+function carLogoPick(b){const i=document.createElement('input');i.type='file';i.accept='image/*';i.onchange=()=>logoRead(i.files[0],d=>{LG()[b]=d;save();if($('#cb_n'))carsForm();else if($('#bp_l'))brandPickList();else if(page==='sell')rSell()});i.click()}
+function carLogoDel(b){if(DB.carLogo)delete DB.carLogo[b];save();carsForm()}
+let QBLOGO='';
+const _norm=t=>String(t||'').replace(/[أإآ]/g,'ا').replace(/ى/g,'ي').replace(/ة/g,'ه').replace(/\s+/g,'').toLowerCase();
+const BRAND_ALIAS={'ليكزس':'لكزس','هيوندا':'هيونداي','هيونداى':'هيونداي','شفروليه':'شيفروليه','شيفرولية':'شيفروليه','شفرولية':'شيفروليه','مرسدس':'مرسيدس','ميتسوبيشى':'ميتسوبيشي','ميتسوبيشي':'ميتسوبيشي','بيامدبليو':'بيإمدبليو','bmw':'بيإمدبليو','بيام':'بيإمدبليو','فولكس':'فولكسفاجن','فاجن':'فولكسفاجن','toyota':'تويوتا','hyundai':'هيونداي','kia':'كيا','nissan':'نيسان','lexus':'لكزس','mg':'إمجي','byd':'بيواي'};
+function brandMatch(b,q){if(!q)return true;const nb=_norm(b),nq=_norm(q),al=_norm(BRAND_ALIAS[nq]||BRAND_ALIAS[q]||'');return nb.includes(nq)||(al&&nb.includes(al))}
+async function brandAddQuick(pre){
+ QBLOGO='';
+ openModal(`<h2>➕ ماركة جديدة</h2><label>اسم الماركة</label><input id="qb_n" value="${esc(typeof pre==='string'?pre:'')}"><label>الموديلات (اختياري — افصل بينهم بفاصلة ،)</label><input id="qb_m" placeholder="مثال: ES، IS، RX"><label>اللوجو (اختياري — صورة من الموبايل)</label><input type="file" accept="image/*" onchange="logoRead(this.files[0],d=>QBLOGO=d)"><div class="row"><button class="btn k" onclick="brandAddSave()">حفظ</button><button class="btn o" onclick="closeModal()">إلغاء</button></div>`);
+}
+async function brandAddSave(){
+ const n=$('#qb_n').value.trim();if(!n){alert('اكتب اسم الماركة');return}
+ if(brandNames().some(b=>_norm(b)===_norm(n))){alert('الماركة دي موجودة بالفعل');return}
+ if(!can('stockEdit')&&!await askOwner('إضافة ماركة عربيات',['ماركة جديدة: '+n]))return;
+ const ms=$('#qb_m').value.split(/[،,]/).map(x=>x.trim()).filter(Boolean);
+ carW().push([n,[...new Set(ms)]]);if(QBLOGO){LG()[n]=QBLOGO;QBLOGO=''}audit('car','إضافة ماركة '+n);sellBrand=n;sellModel='';showCars=true;closeModal();if(page!=='sell')go('sell');else rSell();
+}
+async function modelAddQuick(){
+ if(!sellBrand)return;
+ openModal(`<h2>➕ موديل جديد — ${esc(sellBrand)}</h2><label>اسم الموديل (أو أكتر، افصل بفاصلة ،)</label><input id="qm_n" placeholder="مثال: كورولا 2021"><div class="row"><button class="btn k" onclick="modelAddSave()">حفظ</button><button class="btn o" onclick="closeModal()">إلغاء</button></div>`);
+}
+async function modelAddSave(){
+ const ms=$('#qm_n').value.split(/[،,]/).map(x=>x.trim()).filter(Boolean);if(!ms.length){alert('اكتب الموديل');return}
+ if(!can('stockEdit')&&!await askOwner('إضافة موديل عربية',[sellBrand+': '+ms.join('، ')]))return;
+ ms.forEach(m=>carEnsure(sellBrand,m));audit('car','إضافة موديل '+ms.join('، ')+' إلى '+sellBrand);sellModel=ms[0];closeModal();rSell();
+}
+// ---- حقول الماركة في نموذج الصنف ----
+function fModels(sel){
+ const b=$('#fbr').value,ms=b&&b!=='__new'?modelsOf(b):[];
+ $('#fbrn').style.display=b==='__new'?'':'none';
+ $('#fmo').innerHTML='<option value="">— كل الموديلات —</option>'+ms.map(m=>`<option ${m===sel?'selected':''}>${esc(m)}</option>`).join('')+'<option value="__new">➕ موديل جديد...</option>';
+ $('#fmo').parentElement.style.display=b?'':'none';fModelNew();
+}
+function fModelNew(){$('#fmon').style.display=$('#fmo').value==='__new'?'':'none'}
+function carFields(i){
+ const ex=i.brand&&!brandNames().includes(i.brand)?[i.brand]:[];
+ return `<div class="sec">🚗 العربية (اختياري)</div><label>ماركة العربية</label><select id="fbr" onchange="fModels()"><option value="">— بدون —</option>${[...brandNames(),...ex].map(b=>`<option ${b===i.brand?'selected':''}>${esc(b)}</option>`).join('')}<option value="__new">➕ ماركة جديدة...</option></select><input id="fbrn" placeholder="اسم الماركة الجديدة" style="display:none">
+ <div><label>الموديل</label><select id="fmo" onchange="fModelNew()"></select><input id="fmon" placeholder="اسم الموديل الجديد" style="display:none"></div>`;
+}
+// ---- إدارة الماركات والموديلات ----
+function carsForm(){
+ const C=CARDB();
+ openModal(`<h2>🚗 ماركات وموديلات العربيات</h2><div style="max-height:50vh;overflow:auto">${C.map((b,i)=>`<div class="cart-i"><span onclick="carModels(${i})" style="cursor:pointer;flex:1">${bLogo(b[0],28)}<b>${esc(b[0])}</b> <small style="color:var(--mut)">${b[1].length} موديل · ${brandCount(b[0])} صنف</small></span><span><button class="btn s o" data-b="${esc(b[0])}" onclick="carLogoPick(this.dataset.b)">🖼️</button> ${(DB.carLogo||{})[b[0]]?`<button class="btn s o" data-b="${esc(b[0])}" onclick="carLogoDel(this.dataset.b)">🚫</button> `:''}<button class="btn s o" onclick="carModels(${i})">📂</button> <button class="btn s o" onclick="carBrandRename(${i})">✏️</button> <button class="btn s d" onclick="carBrandDel(${i})">✕</button></span></div>`).join('')}</div>
+ <label>ماركة جديدة</label><input id="cb_n"><div class="row"><button class="btn k" onclick="carBrandAdd()">+ إضافة</button><button class="btn o" onclick="closeModal();render()">تم</button></div>`);
+}
+function carBrandAdd(){const n=$('#cb_n').value.trim();if(!n)return;if(brandNames().includes(n)){alert('الماركة موجودة');return}carW().push([n,[]]);audit('car','إضافة ماركة '+n);carsForm()}
+function carBrandRename(i){const old=CARDB()[i][0],n=(prompt('الاسم الجديد:',old)||'').trim();if(!n||n===old)return;if(brandNames().includes(n)){alert('موجود');return}carW()[i][0]=n;if(DB.carLogo&&DB.carLogo[old]){DB.carLogo[n]=DB.carLogo[old];delete DB.carLogo[old]}DB.items.forEach(x=>{if(x.brand===old)x.brand=n});if(sellBrand===old)sellBrand=n;audit('car','تغيير ماركة '+old+' → '+n);carsForm()}
+function carBrandDel(i){const b=CARDB()[i][0],c=brandCount(b);if(!confirm('مسح الماركة "'+b+'"'+(c?' ('+c+' صنف هيتشال منهم الماركة بس)':'')+'؟'))return;carW().splice(i,1);if(DB.carLogo)delete DB.carLogo[b];DB.items.forEach(x=>{if(x.brand===b){delete x.brand;delete x.model}});if(sellBrand===b)sellBrand='';audit('car','مسح ماركة '+b);carsForm()}
+function carModels(i){
+ const b=CARDB()[i];
+ openModal(`<h2>🚗 ${esc(b[0])}</h2><div style="max-height:50vh;overflow:auto">${b[1].map((m,j)=>`<div class="cart-i"><span>${esc(m)} <small style="color:var(--mut)">(${DB.items.filter(x=>x.brand===b[0]&&x.model===m).length})</small></span><span><button class="btn s o" onclick="carModelRename(${i},${j})">✏️</button> <button class="btn s d" onclick="carModelDel(${i},${j})">✕</button></span></div>`).join('')||'<div class="empty">مفيش موديلات</div>'}</div>
+ <label>موديل جديد</label><input id="cm_n" placeholder="مثال: كورولا 2020"><div class="row"><button class="btn k" onclick="carModelAdd(${i})">+ إضافة</button><button class="btn o" onclick="carsForm()">رجوع</button></div>`);
+}
+function carModelAdd(i){const n=$('#cm_n').value.trim();if(!n)return;const w=carW()[i];if(w[1].includes(n)){alert('موجود');return}w[1].push(n);audit('car','إضافة موديل '+n+' إلى '+w[0]);carModels(i)}
+function carModelRename(i,j){const w=carW()[i],old=w[1][j],n=(prompt('الاسم الجديد:',old)||'').trim();if(!n||n===old)return;if(w[1].includes(n)){alert('موجود');return}w[1][j]=n;DB.items.forEach(x=>{if(x.brand===w[0]&&x.model===old)x.model=n});audit('car','تغيير موديل '+old+' → '+n);carModels(i)}
+function carModelDel(i,j){const w=carW()[i],m=w[1][j];if(!confirm('مسح الموديل "'+m+'"؟'))return;w[1].splice(j,1);DB.items.forEach(x=>{if(x.brand===w[0]&&x.model===m)delete x.model});if(sellModel===m)sellModel='';audit('car','مسح موديل '+m);carModels(i)}
+
+// بيانات تجريبية أول مرة
+if(!DB.items.length&&!DB.sales.length){
+ [['مفتاح عادي خام',CATS[0],100,2,10],['مفتاح أمان خام',CATS[0],60,6,30],['ريموت سيارة عام',CATS[2],10,150,400],['كالون باب',CATS[3],12,120,220],['قفل حديد',CATS[3],20,40,90]]
+ .forEach(([n,c,q,k,p])=>DB.items.push({id:uid(),name:n,cat:c,service:false,qty:q,cost:k,price:p}));
+ addMissingServices();
+ save();
+}
+if(!DB.labor2){addMissingServices();DB.labor2=1;save()}
+navInit();boot();
+setTimeout(hideSplash,2200);
+if('serviceWorker' in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('sw.js').catch(()=>{});
+</script>
+</body>
+</html>

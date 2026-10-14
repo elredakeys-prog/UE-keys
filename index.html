@@ -354,6 +354,7 @@ function rStock(){
  $('#app').innerHTML=`<div class="card"><div class="row"><input id="sq2" placeholder="🔍 بحث..." value="${esc(stockQ)}" oninput="stockQ=this.value;rStock();const e=$('#sq2');e.focus();e.setSelectionRange(e.value.length,e.value.length)"><button class="btn" style="flex:0 0 auto;margin-bottom:8px" onclick="itemForm()">+ صنف</button></div>
  <div class="row"><select onchange="stockBrand=this.value;stockModel='';rStock()"><option value="">كل العربيات</option>${brandNames().map(b=>`<option ${b===stockBrand?'selected':''}>${esc(b)}</option>`).join('')}</select>${stockBrand?`<select onchange="stockModel=this.value;rStock()"><option value="">كل الموديلات</option>${modelsOf(stockBrand).map(m=>`<option ${m===stockModel?'selected':''}>${esc(m)}</option>`).join('')}</select>`:''}</div>
  <div class="row"><button class="btn s o" onclick="go('moves')">📜 سجل حركة المخزون</button><button class="btn s o" onclick="stocktake()">📋 جرد</button></div>
+ ${can('stockEdit')&&can('viewCost')?'<button class="btn" style="width:100%;margin-bottom:8px" onclick="repriceForm()">💲 تحديث الأسعار (لما التكلفة تزيد)</button>':''}
  ${can('stockEdit')?'<div class="row"><button class="btn s o" onclick="sectionsForm()">🗂️ الأقسام</button><button class="btn s o" onclick="carsForm()">🚗 ماركات العربيات</button></div>':''}
  <button class="btn s o" onclick="addDefaultServices()">+ إضافة خدمات المصنعية الجاهزة (أسعار تقديرية)</button>
  <div class="tw" style="margin-top:8px">${list.length?`<table><tr><th>الصنف</th><th>الكمية</th><th class="costcol">التكلفة</th><th>السعر</th><th></th></tr>`+list.map(i=>`<tr><td>${esc(i.name)}<br><span class="tag">${i.service?esc(i.grp||'خدمة'):esc(i.cat)}</span>${i.brand?' <span class="tag ok">🚗 '+carTag(i)+'</span>':''}</td>
@@ -952,18 +953,95 @@ function purLines(){
  const t=PD.lines.reduce((a,l)=>a+l.qty*l.cost,0);
  $('#p_l').innerHTML=PD.lines.length?PD.lines.map((l,i)=>`<div class="cart-i"><span>${esc(l.name)} × ${l.qty}<br><small style="color:var(--mut)">${money(l.cost)} للوحدة</small></span><span>${money(l.qty*l.cost)} <button class="btn s d" onclick="PD.lines.splice(${i},1);purLines()">✕</button></span></div>`).join('')+`<div class="total">${money(t)}</div>`:'<div class="empty">لسه ما ضفتش أصناف</div>';
 }
+
+// ---- تحديث الأسعار لما التكلفة تزيد ----
+let RPR=[];
+const rpSecs=()=>[...new Set(DB.items.map(i=>i.service?(i.grp||'خدمة'):i.cat))].filter(Boolean);
+function rpScope(v){
+ if(v==='all')return DB.items;
+ if(v&&v.startsWith('sec:')){const n=v.slice(4);return DB.items.filter(i=>(i.service?(i.grp||'خدمة'):i.cat)===n)}
+ return DB.items.filter(i=>(!stockQ||i.name.includes(stockQ))&&carFilter(i,stockBrand,stockModel));
+}
+function repriceForm(){
+ if(!(can('stockEdit')&&can('viewCost'))){alert('مش مسموح');return}
+ openModal(`<h2>💲 تحديث الأسعار</h2><p style="font-size:12px;color:var(--mut)">لو الأسعار زادت: اختار الأصناف، وقول الزيادة، وشوف المعاينة قبل ما تطبق. تقدر تتراجع بعدها.</p>
+ <label>الأصناف</label><select id="rp_s"><option value="view">الأصناف المعروضة دلوقتي في المخزون (${rpScope('view').length})</option><option value="all">كل الأصناف (${DB.items.length})</option>${rpSecs().map(n=>`<option value="sec:${esc(n)}">قسم: ${esc(n)}</option>`).join('')}</select>
+ <label>طريقة التعديل</label><select id="rp_m" onchange="rpMode()"><option value="pct">زيادة بنسبة %</option><option value="fix">زيادة بمبلغ ثابت</option><option value="margin">سعر البيع = التكلفة + هامش ربح %</option><option value="last">التكلفة = آخر سعر توريد</option></select>
+ <div id="rp_v1"><label id="rp_vl">النسبة % (اكتب سالب للتخفيض)</label><input id="rp_v" type="number" inputmode="decimal"></div>
+ <div id="rp_t1"><label>تتطبق على</label><select id="rp_t"><option value="both">التكلفة وسعر البيع</option><option value="price">سعر البيع بس</option><option value="cost">التكلفة بس</option></select></div>
+ <label>تقريب سعر البيع</label><select id="rp_r"><option value="0">من غير تقريب</option><option value="1">لأقرب جنيه</option><option value="5">لأقرب 5</option><option value="10">لأقرب 10</option></select>
+ <div class="row"><button class="btn k" onclick="rpPreview()">👁️ معاينة</button><button class="btn o" onclick="closeModal()">إلغاء</button></div>
+ ${DB.lastReprice?`<button class="btn s o" style="width:100%;margin-top:8px" onclick="repriceUndo()">↩️ تراجع عن آخر تحديث (${DB.lastReprice.rows.length} صنف — ${new Date(DB.lastReprice.t).toLocaleDateString('ar-EG')})</button>`:''}`);
+}
+function rpMode(){
+ const m=$('#rp_m').value;
+ $('#rp_t1').style.display=(m==='pct'||m==='fix')?'':'none';
+ $('#rp_v1').style.display=m==='last'?'none':'';
+ $('#rp_vl').textContent=m==='pct'?'النسبة % (اكتب سالب للتخفيض)':m==='fix'?'المبلغ (سالب للتخفيض)':'هامش الربح % على التكلفة';
+}
+function rpPreview(){
+ const sc=$('#rp_s').value,m=$('#rp_m').value,v=+$('#rp_v').value,t=$('#rp_t').value,st=+$('#rp_r').value;
+ if(m!=='last'&&!v){alert('اكتب القيمة');return}
+ const r2=x=>Math.round(x*100)/100,rp=x=>st>0?Math.round(x/st)*st:r2(x);
+ RPR=[];
+ rpScope(sc).forEach(it=>{
+  const c=+it.cost||0,p=+it.price||0;let nc=c,np=p;
+  if(m==='pct'){if(t!=='price')nc=r2(c*(1+v/100));if(t!=='cost')np=rp(p*(1+v/100))}
+  else if(m==='fix'){if(t!=='price')nc=r2(c+v);if(t!=='cost')np=rp(p+v)}
+  else if(m==='margin'){if(c<=0)return;np=rp(c*(1+v/100))}
+  else if(m==='last'){if(it.lastCost==null||!(+it.lastCost>0))return;nc=r2(+it.lastCost)}
+  nc=Math.max(0,nc);np=Math.max(0,np);
+  if(nc!==c||np!==p)RPR.push({id:it.id,name:it.name,c,p,nc,np});
+ });
+ if(!RPR.length){alert('مفيش أصناف هتتغيّر بالإعدادات دي');return}
+ const warn=RPR.filter(x=>x.np<x.nc).length;
+ openModal(`<h2>👁️ معاينة (${RPR.length} صنف)</h2>${warn?`<div class="tag low" style="display:block;margin:4px 0">⚠️ ${warn} صنف سعر بيعه هيبقى أقل من تكلفته</div>`:''}
+ <div style="max-height:50vh;overflow:auto">${RPR.map((x,i)=>`<label class="cart-i" style="font-size:13px;align-items:flex-start;gap:6px"><input type="checkbox" class="rp_c" data-i="${i}" checked><span style="flex:1">${esc(x.name)}<br><small style="color:var(--mut)">تكلفة ${money(x.c)} ← <b>${money(x.nc)}</b></small></span><span style="text-align:left">${money(x.p)}<br>← <b style="color:${x.np<x.nc?'var(--bad)':'var(--ok)'}">${money(x.np)}</b></span></label>`).join('')}</div>
+ <div class="row" style="margin-top:8px"><button class="btn k" onclick="rpApply()">✅ تطبيق على المحدد</button><button class="btn o" onclick="repriceForm()">رجوع</button></div>`);
+}
+function rpApply(){
+ if(!(can('stockEdit')&&can('viewCost')))return;
+ const ids=[...document.querySelectorAll('.rp_c')].filter(c=>c.checked).map(c=>RPR[+c.dataset.i]);
+ if(!ids.length){alert('محدّدتش أي صنف');return}
+ const rows=[];
+ ids.forEach(x=>{const it=DB.items.find(i=>i.id===x.id);if(!it)return;rows.push({id:it.id,c:+it.cost||0,p:+it.price||0,nc:x.nc,np:x.np});it.cost=x.nc;it.price=x.np});
+ DB.lastReprice={t:nowISO(),by:ME.name,rows};
+ audit('reprice',{n:rows.length,ex:ids.slice(0,5).map(x=>x.name+': '+x.p+'→'+x.np).join(' | ')});
+ closeModal();rStock();alert('تم تحديث '+rows.length+' صنف ✅');
+}
+function repriceUndo(){
+ const L=DB.lastReprice;if(!L||!confirm('تراجع عن آخر تحديث أسعار ('+L.rows.length+' صنف)؟'))return;
+ let n=0,sk=0;
+ L.rows.forEach(r=>{const it=DB.items.find(i=>i.id===r.id);if(!it)return;if((+it.cost||0)===r.nc&&(+it.price||0)===r.np){it.cost=r.c;it.price=r.p;n++}else sk++});
+ DB.lastReprice=null;audit('reprice',{n,undo:1,skipped:sk});closeModal();rStock();alert('اتراجع عن '+n+' صنف'+(sk?' (و'+sk+' اتغيّروا بعد كده فمالمستهم)':''));
+}
+let PSUG=[];
+function purSuggest(){
+ if(!PSUG.length||!can('stockEdit')||!can('viewCost'))return;
+ openModal(`<h2>📈 التكلفة زادت</h2><p style="font-size:13px">التوريد ده رفع تكلفة الأصناف دي. تحب تعدّل سعر البيع بنفس نسبة الربح القديمة؟</p>
+ <div style="max-height:45vh;overflow:auto">${PSUG.map((x,i)=>`<label class="cart-i" style="font-size:13px;gap:6px"><input type="checkbox" class="ps_c" data-i="${i}" checked><span style="flex:1">${esc(x.name)}<br><small style="color:var(--mut)">تكلفة ${money(x.oc)} ← ${money(x.nc)}</small></span><span>${money(x.op)} ← <b style="color:var(--ok)">${money(x.np)}</b></span></label>`).join('')}</div>
+ <div class="row" style="margin-top:8px"><button class="btn k" onclick="purSugApply()">✅ عدّل المحدد</button><button class="btn o" onclick="closeModal()">سيبها زي ما هي</button></div>`);
+}
+function purSugApply(){
+ const ch=[...document.querySelectorAll('.ps_c')].filter(c=>c.checked).map(c=>PSUG[+c.dataset.i]);let n=0;const rows=[];
+ ch.forEach(x=>{const it=DB.items.find(i=>i.id===x.id);if(it){rows.push({id:it.id,c:+it.cost||0,p:+it.price||0,nc:+it.cost||0,np:x.np});it.price=x.np;n++}});
+ if(n){DB.lastReprice={t:nowISO(),by:ME.name,rows};audit('reprice',{n,from:'توريد',ex:ch.slice(0,5).map(x=>x.name+': '+x.op+'→'+x.np).join(' | ')})}
+ PSUG=[];closeModal();alert('اتعدّل سعر '+n+' صنف ✅');
+}
 function purSave(){
  if(!PD.lines.length){alert('ضيف صنف واحد على الأقل');return}
  const sid=+$('#p_s').value,total=PD.lines.reduce((a,l)=>a+l.qty*l.cost,0);
  let paid=+$('#p_p').value||0;if(paid>total){alert('المدفوع أكبر من إجمالي الفاتورة. لو دفعت تحت الحساب سجله من زرار "سداد".');return}
+ PSUG=[];
  PD.lines.forEach(l=>{
   const it=DB.items.find(i=>i.id===l.id);if(!it)return;
-  const nq=it.qty+l.qty;
+  const nq=it.qty+l.qty,oc=+it.cost||0,op=+it.price||0;
   it.cost=nq>0?((it.qty*(it.cost||0))+(l.qty*l.cost))/nq:l.cost;
+  if(oc>0&&op>oc&&it.cost>oc+0.005){const np=Math.round(it.cost*(op/oc));if(np>op)PSUG.push({id:it.id,name:it.name,oc,nc:Math.round(it.cost*100)/100,op,np})}
   it.lastCost=l.cost;it.lastSup=sid;moveStock(it,l.qty,'توريد',0);
  });
  const pid=uid();DB.purchases.push({id:pid,date:$('#p_d').value||dkey(),supplier:sid,lines:PD.lines.map(l=>({...l})),total,paid,note:$('#p_n').value.trim(),un:ME.name});
- audit('purchase',{id:pid,total,paid});PD=null;supView(sid);
+ audit('purchase',{id:pid,total,paid});PD=null;supView(sid);setTimeout(purSuggest,150);
 }
 function purView(id){
  const p=DB.purchases.find(x=>x.id===id);if(!p)return;
@@ -1458,7 +1536,7 @@ function saveUser(id){
 
 // ---- سجل العمليات ----
 function rLog(){
- const L=DB.log.slice(-150).reverse(),lab={sale:'🧾 بيع',void:'❌ إلغاء فاتورة',exp:'💸 مصروف',expdel:'🗑 حذف مصروف',login:'دخول',logout:'خروج',badpin:'🚨 كلمة سر غلط',approve:'✅ موافقة',deny:'⛔ رفض',item:'📦 صنف',stocktake:'📋 جرد',close:'💰 قفل خزنة',user:'👥 مستخدم',pay:'💵 سداد عميل',loss:'🗑️ هالك',payroll:'👷 مرتب',payrolldel:'↩️ حذف مرتب',approvalcode:'🔑 كود الموافقة',section:'🗂️ قسم',car:'🚗 ماركات',lossdel:'↩️ حذف هالك',diary:'📓 يومية',diarydel:'🗑 حذف يومية',worker:'🔧 فني',purchase:'🏭 توريد',purdel:'🗑 حذف توريد',cust:'👤 عميل',custdel:'🗑 حذف عميل',restore:'♻️ استرجاع',wipe:'🗑 مسح الكل',setup:'إعداد',ack:'اعتماد',supdel:'🏭 مورد'};
+ const L=DB.log.slice(-150).reverse(),lab={reprice:'💲 تحديث أسعار',sale:'🧾 بيع',void:'❌ إلغاء فاتورة',exp:'💸 مصروف',expdel:'🗑 حذف مصروف',login:'دخول',logout:'خروج',badpin:'🚨 كلمة سر غلط',approve:'✅ موافقة',deny:'⛔ رفض',item:'📦 صنف',stocktake:'📋 جرد',close:'💰 قفل خزنة',user:'👥 مستخدم',pay:'💵 سداد عميل',loss:'🗑️ هالك',payroll:'👷 مرتب',payrolldel:'↩️ حذف مرتب',approvalcode:'🔑 كود الموافقة',section:'🗂️ قسم',car:'🚗 ماركات',lossdel:'↩️ حذف هالك',diary:'📓 يومية',diarydel:'🗑 حذف يومية',worker:'🔧 فني',purchase:'🏭 توريد',purdel:'🗑 حذف توريد',cust:'👤 عميل',custdel:'🗑 حذف عميل',restore:'♻️ استرجاع',wipe:'🗑 مسح الكل',setup:'إعداد',ack:'اعتماد',supdel:'🏭 مورد'};
  const fmt=d=>typeof d==='object'?Object.entries(d||{}).filter(([k])=>k!=='h').map(([k,v])=>k+': '+(typeof v==='object'?JSON.stringify(v):v)).join(' · '):String(d||'');
  $('#app').innerHTML=`<div class="card"><h2>🛡️ سجل العمليات</h2><div class="row"><button class="btn k" onclick="runVerify()">🔍 فحص السلامة</button><button class="btn o" onclick="exportLog()">⬇️ تصدير</button><button class="btn o" onclick="go('settings')">رجوع</button></div>
  <div class="tw" style="margin-top:8px">${L.map(e=>`<div class="cart-i" style="font-size:12px;align-items:flex-start"><span><b>${lab[e.a]||esc(e.a)}</b> · ${esc(e.un)}<br><small style="color:var(--mut)">${esc(fmt(e.d)).slice(0,160)}</small></span><small>${new Date(e.t).toLocaleString('ar-EG',{day:'numeric',month:'numeric',hour:'2-digit',minute:'2-digit'})}</small></div>`).join('')||'<div class="empty">فاضي</div>'}</div></div>`;

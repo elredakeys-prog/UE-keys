@@ -188,12 +188,12 @@ const custDebt=id=>DB.sales.filter(s=>s.cust===id).reduce((a,s)=>a+(saleTotal(s)
 // ============ البيع ============
 let sellCat='الكل',sellQ='';
 function rSell(){
- const cats=['الكل','خدمات',...SECS()];
+ const cats=secChips();
  let list=DB.items.filter(i=>(sellCat==='الكل'||(sellCat==='خدمات'?i.service:(i.cat===sellCat||i.grp===sellCat)))&&(!sellQ||i.name.includes(sellQ))&&carFilter(i,sellBrand,sellModel));
  $('#app').innerHTML=`
  <div class="card"><button class="btn" style="width:100%;margin-bottom:8px" onclick="jobWizard()">🔑 شغلانة مفتاح سيارة (قطعة + مصنعية)</button>
  ${lossOk()?'<button class="btn s d" style="width:100%;margin-bottom:8px" onclick="go(\'loss\')">🗑️ هالك وخسارة (تالف / ضايع)</button>':''}<input id="sq" placeholder="🔍 ابحث عن صنف أو خدمة..." value="${esc(sellQ)}" oninput="sellQ=this.value;rSellList()">
- <div class="chips">${cats.map(c=>`<button class="chip ${c===sellCat?'on':''}" data-c="${esc(c)}" onclick="sellCat=this.dataset.c;rSell()">${esc(c)}</button>`).join('')}<button class="chip ${(showCars||sellBrand)?'on':''}" onclick="showCars=!showCars;if(!showCars){sellBrand='';sellModel=''}rSell()">🚗 حسب العربية</button>${can('stockEdit')?'<button class="chip" onclick="sectionsForm()">🗂️ أقسام +</button>':''}</div>
+ <div class="chips">${cats.map(c=>`<button class="chip ${c===sellCat?'on':''}" data-c="${esc(c)}" onclick="sellCat=this.dataset.c;rSell()">${esc(c)}</button>`).join('')}${moreSecChip()}<button class="chip ${(showCars||sellBrand)?'on':''}" onclick="showCars=!showCars;if(!showCars){sellBrand='';sellModel=''}rSell()">🚗 حسب العربية</button>${can('stockEdit')?'<button class="chip" onclick="sectionsForm()">🗂️ أقسام +</button>':''}</div>
  ${(showCars||sellBrand)?carCard():''}
  <div id="sl"></div></div>
  <div class="card"><h2>✍️ أضف بند بسعرك</h2>
@@ -362,8 +362,10 @@ function rStock(){
  <td><button class="btn s o" onclick="itemForm(${i.id})">✏️</button></td></tr>`).join('')+'</table>':'<div class="empty">مفيش أصناف</div>'}</div></div>`;
  const q=$('#app input');if(q&&document.activeElement===document.body){}
 }
+let ALSO=[];
 function itemForm(id){
  const i=id?DB.items.find(x=>x.id===id):{name:'',cat:CATS[0],service:false,qty:0,cost:0,price:0};
+ ALSO=(i.also||[]).map(x=>({...x}));
  openModal(`<h2>${id?'تعديل':'إضافة'} صنف</h2>
  <label>الاسم</label><input id="fn" value="${esc(i.name)}" placeholder="مثال: مفتاح تويوتا كورولا">
  <div class="row"><div><label>النوع</label><select id="ft" onchange="$('#fq').parentElement.style.display=this.value==='1'?'none':''"><option value="0" ${!i.service?'selected':''}>منتج</option><option value="1" ${i.service?'selected':''}>خدمة</option></select></div>
@@ -373,7 +375,7 @@ function itemForm(id){
  <div class="costcol"><label>التكلفة</label><input id="fk" type="number" value="${i.cost||0}"></div>
  <div><label>سعر البيع</label><input id="fp" type="number" value="${i.price}"></div></div>
  <div class="row"><button class="btn k" onclick="saveItem(${id||0})">حفظ</button>${id?`<button class="btn d" onclick="delItem(${id})">حذف</button>`:''}<button class="btn o" onclick="closeModal()">إلغاء</button></div>`);
- fModels(i.model);
+ fModels(i.model);alsoRender();alsoModels();
 }
 async function saveItem(id){
  const name=$('#fn').value.trim();if(!name){alert('اكتب الاسم');return}
@@ -382,6 +384,8 @@ async function saveItem(id){
  const o={name,service:svc,cat:svc?'خدمة':sec,qty:svc?0:Math.max(0,+$('#fq').value||0),cost:+$('#fk').value||0,price:+$('#fp').value||0};if(svc)o.grp=sec;
  let br=$('#fbr').value,mo=$('#fmo').value;if(br==='__new')br=$('#fbrn').value.trim();if(mo==='__new')mo=$('#fmon').value.trim();
  if(br){carEnsure(br,mo);o.brand=br;o.model=mo||''}else{o.brand='';o.model=''}
+ o.also=br?ALSO.filter(x=>x.b&&!(x.b===br&&(!x.m||x.m===(mo||'')))).map(x=>({b:x.b,m:x.m||''})):[];
+ o.also.forEach(x=>carEnsure(x.b,x.m));
  const old=id?DB.items.find(i=>i.id===id):null,ch=[];
  if(old){if(!o.service&&o.qty!==old.qty)ch.push('كمية '+old.name+': '+old.qty+' → '+o.qty);if(o.price!==old.price)ch.push('سعر البيع '+old.price+' → '+o.price);if(o.cost!==(old.cost||0))ch.push('التكلفة '+(old.cost||0)+' → '+o.cost)}
  else if(!o.service&&o.qty>0)ch.push('صنف جديد '+name+' بكمية '+o.qty);
@@ -1087,7 +1091,7 @@ function jobWizard(){
  <label>نوع الشغلانة (المصنعية)</label><select id="jw_s" onchange="jwSvc()">${Object.entries(groups).map(([g,a])=>`<optgroup label="${esc(g)}">${a.map(i=>`<option value="${i.id}">${esc(i.name)}</option>`).join('')}</optgroup>`).join('')}</select>
  <div id="jw_w" style="font-size:13px;color:var(--bad);margin-bottom:8px"></div>
  <div class="row"><div><label>سعر المصنعية</label><input id="jw_lp" type="number" min="0"></div><div><label>تكلفة علينا (كود / فني)</label><input id="jw_lc" type="number" min="0" value="0"></div></div>
- <label>القطعة (مفتاح / ريموت / كارت) — اختياري</label><select id="jw_p" onchange="jwPart()"><option value="0">— بدون قطعة —</option>${(g=>Object.entries(g).map(([b,a])=>`<optgroup label="${esc(b)}">${a.map(i=>`<option value="${i.id}">${esc(i.name)} (متاح ${i.qty})</option>`).join('')}</optgroup>`).join(''))(parts.reduce((g,i)=>{const k=i.brand?i.brand+(i.model?' — '+i.model:''):'بدون ماركة';(g[k]=g[k]||[]).push(i);return g},{}))}</select>
+ <label>القطعة (مفتاح / ريموت / كارت) — اختياري</label><select id="jw_p" onchange="jwPart()"><option value="0">— بدون قطعة —</option>${(g=>Object.entries(g).map(([b,a])=>`<optgroup label="${esc(b)}">${a.map(i=>`<option value="${i.id}">${esc(i.name)} (متاح ${i.qty})</option>`).join('')}</optgroup>`).join(''))(parts.reduce((g,i)=>{const k=carTag(i)||'بدون ماركة';(g[k]=g[k]||[]).push(i);return g},{}))}</select>
  <div id="jw_pw" style="display:none"><label>سعر القطعة</label><input id="jw_pp" type="number" min="0"></div>
  <div class="row" style="margin-top:8px"><button class="btn k" onclick="jwAdd()">أضف للفاتورة</button><button class="btn o" onclick="closeModal()">إلغاء</button></div>`);
  jwSvc();
@@ -1699,11 +1703,24 @@ window.addEventListener('popstate',()=>{
 const SEC_DEF=[...CATS,'نسخ مفاتيح','مفاتيح سيارات','أقفال وأبواب','رسوم'];
 function SECS(){const base=DB.sections||SEC_DEF,ex=[];DB.items.forEach(i=>[i.cat,i.grp].forEach(x=>{if(x&&x!=='خدمة'&&!base.includes(x)&&!ex.includes(x))ex.push(x)}));return [...base,...ex]}
 const secCount=c=>DB.items.filter(i=>i.cat===c||i.grp===c).length;
+let showAllSecs=false,SECSCROLL=0;
+const secPins=()=>(DB.secPin||[]).filter(x=>SECS().includes(x));
+function secChips(){
+ const S=SECS(),P=secPins(),base=['الكل','خدمات'];
+ if(!P.length||showAllSecs)return [...base,...S.filter(x=>P.includes(x)),...S.filter(x=>!P.includes(x))];
+ return [...base,...S.filter(x=>P.includes(x)||x===sellCat)];
+}
+function moreSecChip(){const P=secPins();if(!P.length)return '';const n=SECS().filter(x=>!P.includes(x)).length;return n?`<button class="chip" onclick="showAllSecs=!showAllSecs;rSell()">${showAllSecs?'▲ إخفاء':'▾ باقي الأقسام ('+n+')'}</button>`:''}
+function secKeep(){const e=$('#sec_l');SECSCROLL=e?e.scrollTop:0}
+function secMove(i,d){const S=SECS(),j=i+d;if(j<0||j>=S.length)return;secKeep();[S[i],S[j]]=[S[j],S[i]];DB.sections=S;audit('section','ترتيب الأقسام');sectionsForm()}
+function secTop(i){const S=SECS();secKeep();SECSCROLL=0;const [c]=S.splice(i,1);S.unshift(c);DB.sections=S;audit('section','نقل '+c+' لأول القائمة');sectionsForm()}
+function secPin(i){const c=SECS()[i];secKeep();const P=DB.secPin||(DB.secPin=[]);const k=P.indexOf(c);if(k>=0)P.splice(k,1);else{P.push(c);const S=SECS();if(S.indexOf(c)>0&&!S.slice(0,S.indexOf(c)).some(x=>P.includes(x))){}}audit('section',(k>=0?'شال النجمة من ':'نجمة لـ ')+c);sectionsForm()}
 function sectionsForm(){
  const S=SECS();
- openModal(`<h2>🗂️ الأقسام</h2><small style="color:var(--mut)">قسّم أصنافك وخدماتك زي ما تحب (مثال: مفاتيح سيارات، أحجار، إكسسوار...).</small>
- ${S.map((c,i)=>`<div class="cart-i"><span>${esc(c)} <small style="color:var(--mut)">(${secCount(c)})</small></span><span>${c==='رسوم'?'<small>أساسي</small>':`<button class="btn s o" onclick="secRename(${i})">✏️</button> <button class="btn s d" onclick="secDel(${i})">✕</button>`}</span></div>`).join('')}
+ openModal(`<h2>🗂️ الأقسام</h2><small style="color:var(--mut)">⭐ علّم الأقسام اللي بتستخدمها: هتظهر لك لوحدها في البيع، والباقي يتخبّى تحت "باقي الأقسام". استخدم ⬆️ ⬇️ ⏫ لترتيبهم وحط الشبه بعض جنب بعض.</small>
+ <div id="sec_l" style="max-height:52vh;overflow:auto;margin-top:6px">${S.map((c,i)=>{const pn=secPins().includes(c);return `<div class="cart-i" style="${pn?'background:#fff8e1;border-radius:8px;padding-inline:6px':''}"><span style="flex:1">${esc(c)} <small style="color:var(--mut)">(${secCount(c)})</small></span><span style="white-space:nowrap"><button class="btn s o" onclick="secPin(${i})">${pn?'⭐':'☆'}</button> <button class="btn s o" onclick="secTop(${i})">⏫</button> <button class="btn s o" onclick="secMove(${i},-1)">⬆️</button> <button class="btn s o" onclick="secMove(${i},1)">⬇️</button> ${c==='رسوم'?'':`<button class="btn s o" onclick="secRename(${i})">✏️</button> <button class="btn s d" onclick="secDel(${i})">✕</button>`}</span></div>`}).join('')}</div>
  <label>قسم جديد</label><input id="sc_n" placeholder="مثال: أحجار"><div class="row"><button class="btn k" onclick="secAdd()">+ إضافة</button><button class="btn o" onclick="closeModal();render()">تم</button></div>`);
+ if(SECSCROLL){$('#sec_l').scrollTop=SECSCROLL;SECSCROLL=0}
 }
 function secAdd(){
  const n=$('#sc_n').value.trim();if(!n){alert('اكتب اسم القسم');return}
@@ -1714,7 +1731,7 @@ async function secRename(i){
  const S=SECS(),old=S[i],n=(prompt('الاسم الجديد للقسم:',old)||'').trim();
  if(!n||n===old)return;
  if(S.includes(n)||n==='الكل'||n==='خدمات'||n==='خدمة'){alert('الاسم ده موجود');return}
- DB.sections=S;DB.sections[i]=n;DB.items.forEach(x=>{if(x.cat===old)x.cat=n;if(x.grp===old)x.grp=n});
+ DB.sections=S;DB.sections[i]=n;if(DB.secPin)DB.secPin=DB.secPin.map(x=>x===old?n:x);DB.items.forEach(x=>{if(x.cat===old)x.cat=n;if(x.grp===old)x.grp=n});
  if(sellCat===old)sellCat=n;audit('section','تغيير اسم قسم '+old+' إلى '+n);sectionsForm();
 }
 async function secDel(i){
@@ -1723,7 +1740,7 @@ async function secDel(i){
   if(c==='أخرى'){alert('قسم "أخرى" بيستقبل الأصناف المنقولة، مينفعش يتمسح وفيه أصناف');return}
   if(!confirm('القسم فيه '+cnt+' صنف/خدمة. هتتنقل لقسم "أخرى". متأكد؟'))return;
  }
- DB.sections=S.filter((_,k)=>k!==i);if(cnt&&!DB.sections.includes('أخرى'))DB.sections.push('أخرى');
+ DB.sections=S.filter((_,k)=>k!==i);if(DB.secPin)DB.secPin=DB.secPin.filter(x=>x!==c);if(cnt&&!DB.sections.includes('أخرى'))DB.sections.push('أخرى');
  DB.items.forEach(x=>{if(x.cat===c)x.cat='أخرى';if(x.grp===c)x.grp='أخرى'});
  if(sellCat===c)sellCat='الكل';audit('section','حذف قسم '+c+(cnt?' ونقل '+cnt+' إلى أخرى':''));sectionsForm();
 }
@@ -1804,18 +1821,20 @@ function carEnsure(b,m){ // يضيف الماركة/الموديل لو جديد
  if(m&&!x[1].includes(m)){const w=carW().find(y=>y[0]===b);w[1].push(m)}
 }
 let showCars=false,sellBrand='',sellModel='',stockBrand='',stockModel='';
-const brandCount=b=>DB.items.filter(i=>i.brand===b).length;
-const carTag=i=>i.brand?esc(i.brand)+(i.model?' · '+esc(i.model):''):'';
-const carFilter=(i,b,m)=>!b||(i.brand===b&&(!m||i.model===m));
+const carLinks=i=>[{b:i.brand,m:i.model||''},...(i.also||[])].filter(x=>x.b);
+const itemHas=(i,b,m)=>carLinks(i).some(x=>x.b===b&&(!m||x.m===m));
+const brandCount=b=>DB.items.filter(i=>itemHas(i,b,'')).length;
+const carTag=i=>carLinks(i).map(x=>esc(x.b)+(x.m?' · '+esc(x.m):'')).join(' + ');
+const carFilter=(i,b,m)=>!b||itemHas(i,b,m);
 function carCard(){
  const used=brandNames().filter(b=>brandCount(b)>0);
  let h='<div style="background:#eef6fb;border-radius:10px;padding:8px;margin:8px 0">';
  if(!sellBrand){
   h+=`<div class="chips">${used.map(b=>`<button class="chip" data-b="${esc(b)}" onclick="sellBrand=this.dataset.b;sellModel='';rSell()">${bLogo(b,22)}${esc(b)} (${brandCount(b)})</button>`).join('')}<button class="chip" onclick="brandPicker()">🔎 كل الماركات</button><button class="chip" onclick="brandAddQuick()">➕ ماركة جديدة</button></div>${used.length?'':'<small style="color:var(--mut)">لسه مفيش أصناف متسجل عليها ماركة. ضيف الماركة من شاشة الصنف (تبويب المخزون).</small>'}`;
  }else{
-  const ms=[...new Set([...modelsOf(sellBrand),...DB.items.filter(i=>i.brand===sellBrand&&i.model).map(i=>i.model)])];
+  const ms=[...new Set([...modelsOf(sellBrand),...DB.items.flatMap(i=>carLinks(i).filter(x=>x.b===sellBrand&&x.m).map(x=>x.m))])];
   h+=`<div class="row" style="align-items:center"><b style="flex:1">${bLogo(sellBrand,30)}${esc(sellBrand)}</b><button class="btn s o" style="flex:0 0 auto" onclick="sellBrand='';sellModel='';rSell()">✕ كل العربيات</button></div>
-  <div class="chips"><button class="chip ${!sellModel?'on':''}" onclick="sellModel='';rSell()">الكل (${brandCount(sellBrand)})</button>${ms.map(m=>{const n=DB.items.filter(i=>i.brand===sellBrand&&i.model===m).length;return `<button class="chip ${sellModel===m?'on':''}" data-m="${esc(m)}" onclick="sellModel=this.dataset.m;rSell()">${esc(m)}${n?' ('+n+')':''}</button>`}).join('')}<button class="chip" onclick="modelAddQuick()">➕ موديل جديد</button></div>`;
+  <div class="chips"><button class="chip ${!sellModel?'on':''}" onclick="sellModel='';rSell()">الكل (${brandCount(sellBrand)})</button>${ms.map(m=>{const n=DB.items.filter(i=>itemHas(i,sellBrand,m)).length;return `<button class="chip ${sellModel===m?'on':''}" data-m="${esc(m)}" onclick="sellModel=this.dataset.m;rSell()">${esc(m)}${n?' ('+n+')':''}</button>`}).join('')}<button class="chip" onclick="modelAddQuick()">➕ موديل جديد</button></div>`;
  }
  return h+'</div>';
 }
@@ -1871,7 +1890,18 @@ function fModelNew(){$('#fmon').style.display=$('#fmo').value==='__new'?'':'none
 function carFields(i){
  const ex=i.brand&&!brandNames().includes(i.brand)?[i.brand]:[];
  return `<div class="sec">🚗 العربية (اختياري)</div><label>ماركة العربية</label><select id="fbr" onchange="fModels()"><option value="">— بدون —</option>${[...brandNames(),...ex].map(b=>`<option ${b===i.brand?'selected':''}>${esc(b)}</option>`).join('')}<option value="__new">➕ ماركة جديدة...</option></select><input id="fbrn" placeholder="اسم الماركة الجديدة" style="display:none">
- <div><label>الموديل</label><select id="fmo" onchange="fModelNew()"></select><input id="fmon" placeholder="اسم الموديل الجديد" style="display:none"></div>`;
+ <div><label>الموديل</label><select id="fmo" onchange="fModelNew()"></select><input id="fmon" placeholder="اسم الموديل الجديد" style="display:none"></div>
+ <div class="sec">🔗 بيشتغل كمان على (ماركات تانية)</div><small style="color:var(--mut)">لو القطعة (ريموت مثلاً) بتركّب على أكتر من ماركة، ضيفهم هنا وهتظهر في بحث كل ماركة بنفس الكمية.</small>
+ <div id="al_l"></div><div class="row"><select id="abr" onchange="alsoModels()"><option value="">— الماركة —</option>${brandNames().map(b=>`<option>${esc(b)}</option>`).join('')}</select><select id="amo"><option value="">كل الموديلات</option></select></div><button class="btn s o" type="button" style="width:100%;margin:4px 0" onclick="alsoAdd()">➕ إضافة الماركة دي</button>`;
+}
+function alsoRender(){const e=$('#al_l');if(!e)return;e.innerHTML=ALSO.map((x,k)=>`<div class="cart-i" style="font-size:13px"><span>${bLogo(x.b,22)}${esc(x.b)}${x.m?' · '+esc(x.m):' · كل الموديلات'}</span><button class="btn s d" type="button" onclick="ALSO.splice(${k},1);alsoRender()">✕</button></div>`).join('')}
+function alsoModels(){const b=$('#abr').value;$('#amo').innerHTML='<option value="">كل الموديلات</option>'+(b?modelsOf(b).map(m=>`<option>${esc(m)}</option>`).join(''):'')}
+function alsoAdd(){
+ const b=$('#abr').value,m=$('#amo').value;if(!b){alert('اختار الماركة الأول');return}
+ let pb=$('#fbr').value;if(pb==='__new')pb=$('#fbrn').value.trim();let pm=$('#fmo').value;if(pm==='__new')pm=$('#fmon').value.trim();
+ if(!pb){alert('اختار الماركة الأساسية للصنف فوق الأول');return}
+ if((b===pb&&(!m||m===pm))||ALSO.some(x=>x.b===b&&(x.m||'')===m)){alert('الماركة دي مضافة بالفعل');return}
+ ALSO.push({b,m});alsoRender();
 }
 // ---- إدارة الماركات والموديلات ----
 function carsForm(){
@@ -1880,16 +1910,16 @@ function carsForm(){
  <label>ماركة جديدة</label><input id="cb_n"><div class="row"><button class="btn k" onclick="carBrandAdd()">+ إضافة</button><button class="btn o" onclick="closeModal();render()">تم</button></div>`);
 }
 function carBrandAdd(){const n=$('#cb_n').value.trim();if(!n)return;if(brandNames().includes(n)){alert('الماركة موجودة');return}carW().push([n,[]]);audit('car','إضافة ماركة '+n);carsForm()}
-function carBrandRename(i){const old=CARDB()[i][0],n=(prompt('الاسم الجديد:',old)||'').trim();if(!n||n===old)return;if(brandNames().includes(n)){alert('موجود');return}carW()[i][0]=n;if(DB.carLogo&&DB.carLogo[old]){DB.carLogo[n]=DB.carLogo[old];delete DB.carLogo[old]}DB.items.forEach(x=>{if(x.brand===old)x.brand=n});if(sellBrand===old)sellBrand=n;audit('car','تغيير ماركة '+old+' → '+n);carsForm()}
-function carBrandDel(i){const b=CARDB()[i][0],c=brandCount(b);if(!confirm('مسح الماركة "'+b+'"'+(c?' ('+c+' صنف هيتشال منهم الماركة بس)':'')+'؟'))return;carW().splice(i,1);if(DB.carLogo)delete DB.carLogo[b];DB.items.forEach(x=>{if(x.brand===b){delete x.brand;delete x.model}});if(sellBrand===b)sellBrand='';audit('car','مسح ماركة '+b);carsForm()}
+function carBrandRename(i){const old=CARDB()[i][0],n=(prompt('الاسم الجديد:',old)||'').trim();if(!n||n===old)return;if(brandNames().includes(n)){alert('موجود');return}carW()[i][0]=n;if(DB.carLogo&&DB.carLogo[old]){DB.carLogo[n]=DB.carLogo[old];delete DB.carLogo[old]}DB.items.forEach(x=>{if(x.brand===old)x.brand=n;(x.also||[]).forEach(a=>{if(a.b===old)a.b=n})});if(sellBrand===old)sellBrand=n;audit('car','تغيير ماركة '+old+' → '+n);carsForm()}
+function carBrandDel(i){const b=CARDB()[i][0],c=brandCount(b);if(!confirm('مسح الماركة "'+b+'"'+(c?' ('+c+' صنف هيتشال منهم الماركة بس)':'')+'؟'))return;carW().splice(i,1);if(DB.carLogo)delete DB.carLogo[b];DB.items.forEach(x=>{if(x.brand===b){delete x.brand;delete x.model}if(x.also)x.also=x.also.filter(a=>a.b!==b)});if(sellBrand===b)sellBrand='';audit('car','مسح ماركة '+b);carsForm()}
 function carModels(i){
  const b=CARDB()[i];
- openModal(`<h2>🚗 ${esc(b[0])}</h2><div style="max-height:50vh;overflow:auto">${b[1].map((m,j)=>`<div class="cart-i"><span>${esc(m)} <small style="color:var(--mut)">(${DB.items.filter(x=>x.brand===b[0]&&x.model===m).length})</small></span><span><button class="btn s o" onclick="carModelRename(${i},${j})">✏️</button> <button class="btn s d" onclick="carModelDel(${i},${j})">✕</button></span></div>`).join('')||'<div class="empty">مفيش موديلات</div>'}</div>
+ openModal(`<h2>🚗 ${esc(b[0])}</h2><div style="max-height:50vh;overflow:auto">${b[1].map((m,j)=>`<div class="cart-i"><span>${esc(m)} <small style="color:var(--mut)">(${DB.items.filter(x=>itemHas(x,b[0],m)).length})</small></span><span><button class="btn s o" onclick="carModelRename(${i},${j})">✏️</button> <button class="btn s d" onclick="carModelDel(${i},${j})">✕</button></span></div>`).join('')||'<div class="empty">مفيش موديلات</div>'}</div>
  <label>موديل جديد</label><input id="cm_n" placeholder="مثال: كورولا 2020"><div class="row"><button class="btn k" onclick="carModelAdd(${i})">+ إضافة</button><button class="btn o" onclick="carsForm()">رجوع</button></div>`);
 }
 function carModelAdd(i){const n=$('#cm_n').value.trim();if(!n)return;const w=carW()[i];if(w[1].includes(n)){alert('موجود');return}w[1].push(n);audit('car','إضافة موديل '+n+' إلى '+w[0]);carModels(i)}
-function carModelRename(i,j){const w=carW()[i],old=w[1][j],n=(prompt('الاسم الجديد:',old)||'').trim();if(!n||n===old)return;if(w[1].includes(n)){alert('موجود');return}w[1][j]=n;DB.items.forEach(x=>{if(x.brand===w[0]&&x.model===old)x.model=n});audit('car','تغيير موديل '+old+' → '+n);carModels(i)}
-function carModelDel(i,j){const w=carW()[i],m=w[1][j];if(!confirm('مسح الموديل "'+m+'"؟'))return;w[1].splice(j,1);DB.items.forEach(x=>{if(x.brand===w[0]&&x.model===m)delete x.model});if(sellModel===m)sellModel='';audit('car','مسح موديل '+m);carModels(i)}
+function carModelRename(i,j){const w=carW()[i],old=w[1][j],n=(prompt('الاسم الجديد:',old)||'').trim();if(!n||n===old)return;if(w[1].includes(n)){alert('موجود');return}w[1][j]=n;DB.items.forEach(x=>{if(x.brand===w[0]&&x.model===old)x.model=n;(x.also||[]).forEach(a=>{if(a.b===w[0]&&a.m===old)a.m=n})});audit('car','تغيير موديل '+old+' → '+n);carModels(i)}
+function carModelDel(i,j){const w=carW()[i],m=w[1][j];if(!confirm('مسح الموديل "'+m+'"؟'))return;w[1].splice(j,1);DB.items.forEach(x=>{if(x.brand===w[0]&&x.model===m)delete x.model;(x.also||[]).forEach(a=>{if(a.b===w[0]&&a.m===m)a.m=''})});if(sellModel===m)sellModel='';audit('car','مسح موديل '+m);carModels(i)}
 
 // بيانات تجريبية أول مرة
 if(!DB.items.length&&!DB.sales.length){
